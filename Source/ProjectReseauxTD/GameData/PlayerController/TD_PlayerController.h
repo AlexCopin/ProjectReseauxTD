@@ -3,17 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "TD_GameModeBase.generated.h"
+#include "GameFramework/PlayerController.h"
+#include "TD_PlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTRESEAUXTD_API ATD_GameModeBase : public AGameModeBase
+class PROJECTRESEAUXTD_API ATD_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-public:
-
 };
