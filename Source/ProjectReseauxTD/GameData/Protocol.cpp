@@ -1,9 +1,13 @@
 #include "Protocol.h"
+#include "Containers/Array.h"
 #include "terse/utils/Endianness.h"
 
 void Serialize_f32(TArray<uint8>& byteArray, float value)
 {
-	int32 offset = TArray::CountBytes(byteArray);
+	FArchive arch;
+	byteArray.CountBytes(arch);
+	
+	int32 offset = (int32)arch.TotalSize();
 	byteArray.Reserve(offset + sizeof(value));
 
 	return Serialize_f32(byteArray, offset, value);
@@ -11,9 +15,10 @@ void Serialize_f32(TArray<uint8>& byteArray, float value)
 
 void Serialize_f32(TArray<uint8>& byteArray, int32 offset, float value)
 {
-	uint32 v = hton(value);
-
-	check(offset + sizeof(v) <= byteArray.CountBytes());
+	uint32 v = htonf(value);
+	FArchive arch;
+	byteArray.CountBytes(arch);
+	check((offset + sizeof(v)) <= (int32)arch.TotalSize());
 	std::memcpy(&byteArray[offset], &v, sizeof(v));
 }
 
@@ -111,4 +116,17 @@ uint32 Unserialize_u32(const TArray<uint8>& byteArray, int32& offset)
 FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset)
 {
 	return FString();
+}
+
+
+inline uint32 htonf(float f32)
+{
+	union {
+		float f;
+		uint32_t u;
+	} value;
+
+	value.f = f32;
+	return value.u;
+	//return ntohl(value.u);
 }
