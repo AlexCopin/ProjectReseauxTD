@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 
 #include "Containers/Array.h"
+#include <string>
 //#include "Protocol.generated.h"
 
 #include <enet6/enet.h>
@@ -41,7 +42,9 @@ void Serialize_u16(TArray<uint8>& byteArray, int32 offset, uint16 value);
 void Serialize_u32(TArray<uint8>& byteArray, uint32 value);
 void Serialize_u32(TArray<uint8>& byteArray, int32 offset, uint32 value);
 void Serialize_str(TArray<uint8>& byteArray, const  FString& value);
+void Serialize_str(TArray<uint8>& byteArray, const  std::string& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  FString& value);
+void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  std::string& value);
 
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset);
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset);
@@ -68,10 +71,10 @@ struct PlayerNamePacket
 };
 
 
-// Le serveur envoie à un client la liste de tous les joueurs connectés
+// Le serveur envoie ï¿½ un client la liste de tous les joueurs connectï¿½s
 //0
 
-// Le serveur indique au client comment générer le monde
+// Le serveur indique au client comment gï¿½nï¿½rer le monde
 USTRUCT(BlueprintType)
 struct FWorldInitPacket
 {
@@ -105,10 +108,10 @@ private:
 
 
 
-// Petite fonction d'aide pour construire un packet ENet à partir d'une de nos structures de packet, insère automatiquement l'opcode au début des données
+// Petite fonction d'aide pour construire un packet ENet ï¿½ partir d'une de nos structures de packet, insï¿½re automatiquement l'opcode au dï¿½but des donnï¿½es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)
 {
-	// On sérialise l'opcode puis le contenu du packet dans un std::vector<std::uint8_t>
+	// On sï¿½rialise l'opcode puis le contenu du packet dans un std::vector<std::uint8_t>
 	TArray<uint8> byteArray;
 
 	Serialize_u8(byteArray, static_cast<uint8>(T::opcode));
