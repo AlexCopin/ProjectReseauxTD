@@ -8,6 +8,10 @@ enum class Opcode : std::uint8_t
 {
 	C_PlayerName,
 	C_PlayerInput,
+	C_EnemySpawn,
+	S_PlayerList,
+	S_WorldInit,
+	S_EnemySpawn,
 	S_Gold
 };
 
@@ -36,3 +40,16 @@ std::uint8_t Unserialize_u8(const std::vector<std::uint8_t>& byteArray, std::siz
 std::uint16_t Unserialize_u16(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 std::uint32_t Unserialize_u32(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+
+
+
+struct EnemySpawnClientPacket
+{
+	std::uint8_t line;
+	std::uint8_t enemyType;
+
+
+
+	static constexpr Opcode opcode = Opcode::C_EnemySpawn;
+	static EnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};

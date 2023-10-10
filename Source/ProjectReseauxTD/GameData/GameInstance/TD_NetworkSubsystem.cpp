@@ -22,7 +22,7 @@ void UTD_NetworkSubsystem::Tick(float /*DeltaTime*/)
 	}
 
 	ENetEvent Event;
-	if (enet_host_service(Host, &Event, 1) > 0)
+	if (enet_host_service (Host, &Event, 1) > 0)
 	{
 		do
 		{

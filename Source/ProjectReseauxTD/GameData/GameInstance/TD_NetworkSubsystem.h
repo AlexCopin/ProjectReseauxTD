@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include <enet6/enet.h>
+#include <ProjectReseauxTD/GameData/Protocol.h>
 #include "TD_NetworkSubsystem.generated.h"
 
 /**
@@ -30,6 +31,8 @@ public:
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	void Deinitialize() override;
+
+
 
 private:
 	ENetHost* Host = nullptr;
