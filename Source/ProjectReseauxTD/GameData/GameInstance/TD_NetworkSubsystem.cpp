@@ -4,6 +4,34 @@
 #include "TD_NetworkSubsystem.h"
 DEFINE_LOG_CATEGORY_STATIC(ENet6, Log, All);
 
+
+void UTD_NetworkSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	if (enet_initialize() != 0)
+	{
+		UE_LOG(ENet6, Error, TEXT("failed to initialize ENet"));
+		return;
+	}
+	if (!Connect("localhost"))
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Not connected!"));
+		return;
+	}
+	FWorldInitPacket packetInitWorld;
+	packetInitWorld.height = 2;
+	SendWorldInitPacket(packetInitWorld);
+}
+
+void UTD_NetworkSubsystem::Deinitialize()
+{
+	enet_deinitialize();
+}
+
+void UTD_NetworkSubsystem::SendWorldInitPacket(FWorldInitPacket packet)
+{
+	send_packet(build_packet(packet, 0)); //< Comme nous envoyons réguliérement notre position, pas besoin de rendre ça fiable
+}
+
 ETickableTickType UTD_NetworkSubsystem::GetTickableTickType() const
 {
 	return ETickableTickType::Always;
@@ -129,20 +157,9 @@ void UTD_NetworkSubsystem::Disconnect()
 	}
 }
 
-void UTD_NetworkSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	if (enet_initialize() != 0)
-	{
-		UE_LOG(ENet6, Error, TEXT("failed to initialize ENet"));
-		return;
-	}
-	if(Connect("localhost"))
-	{
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Connected!"));
-	}
-}
 
-void UTD_NetworkSubsystem::Deinitialize()
+void UTD_NetworkSubsystem::send_packet(ENetPacket* packet)
 {
-	enet_deinitialize();
+	if(ServerPeer)
+		enet_peer_send(ServerPeer, 0, packet);
 }

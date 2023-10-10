@@ -185,3 +185,10 @@ FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset)
 
 	return UTF8_TO_TCHAR(str.data());
 }
+
+void FWorldInitPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_u16(byteArray, width);
+	Serialize_u16(byteArray, height);
+	Serialize_u32(byteArray, seed);
+}

@@ -4,6 +4,8 @@
 #include <math/quaternion.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
+#include "Protocol.hpp"
 
 struct ServerData
 {
@@ -11,6 +13,7 @@ struct ServerData
 };
 
 void tick(ServerData& serverData);
+void handle_message(const std::vector<std::uint8_t>& message);
 
 int main()
 {
@@ -69,8 +72,16 @@ int main()
 
 					// On a reçu des données d'un joueur
 					case ENetEventType::ENET_EVENT_TYPE_RECEIVE:
-						std::cout << "Peer #" << enet_peer_get_id(event.peer) << " sent data (" << enet_packet_get_length(event.packet) << " bytes)" << std::endl;
-						enet_packet_dispose(event.packet);
+
+						// On a reçu un message ! Traitons-le
+						std::vector<std::uint8_t> content(event.packet->dataLength); //< On copie son contenu dans un std::vector pour plus de facilité de gestion
+						std::memcpy(content.data(), event.packet->data, event.packet->dataLength);
+
+						// On gère le message qu'on a reçu
+						handle_message(content);
+
+						// On n'oublie pas de libérer le packet
+						enet_packet_destroy(event.packet);
 						break;
 				}
 			}
@@ -86,6 +97,60 @@ int main()
 	}
 
 	return EXIT_SUCCESS;
+}
+
+
+void handle_message(const std::vector<std::uint8_t>& message)
+{
+	// On traite les messages reçus par un joueur, différenciés par l'opcode
+	std::size_t offset = 0;
+
+	Opcode opcode = static_cast<Opcode>(Unserialize_u8(message, offset));
+	switch (opcode)
+	{
+		case Opcode::S_WorldInit:
+		{
+			WorldInitServerPacket worldInitPacket = WorldInitServerPacket::Unserialize(message, offset);
+
+
+			std::cout << "World height #" << worldInitPacket.height << std::endl;
+
+			//// Envoyons les gamedata
+			//GameDataPacket gameDataPacket;
+			//gameDataPacket.playerIndex = player.index;
+
+			//ENetPacket* playerListPacket = build_playerlist_packet(gameData);
+
+			//enet_peer_send(player.peer, 0, build_packet(gameDataPacket, ENET_PACKET_FLAG_RELIABLE));
+			//for (const Player& player : gameData.players)
+			//{
+			//	if (player.peer != nullptr && !player.name.empty()) //< Est-ce que le slot est occupé par un joueur (et est-ce que ce joueur a bien envoyé son nom) ?
+			//		enet_peer_send(player.peer, 0, playerListPacket);
+			//}
+
+			//// On envoie les données du monde
+			//enet_peer_send(player.peer, 0, build_world_init_packet(gameData));
+
+			//// On envoie l'état de la partie
+			//enet_peer_send(player.peer, 0, build_state_packet(gameData));
+
+			//// Si nous sommes encore en attente, nous pouvons créer un coureur pour ce joueur (sinon ça devra attendre la course suivante)
+			//if (gameData.state == GameState::Waiting)
+			//{
+			//	player.runner.emplace();
+
+			//	// On renvoie un state tick pour prévenir
+			//	ENetPacket* packet = build_state_packet(gameData);
+			//	for (const Player& player : gameData.players)
+			//	{
+			//		if (player.peer != nullptr && !player.name.empty())
+			//			enet_peer_send(player.peer, 0, packet);
+			//	}
+			//}
+
+			break;
+		}
+	}
 }
 
 void tick(ServerData& serverData)

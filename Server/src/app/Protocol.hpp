@@ -42,6 +42,16 @@ std::uint32_t Unserialize_u32(const std::vector<std::uint8_t>& byteArray, std::s
 std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 
 
+struct WorldInitServerPacket
+{
+
+	std::uint16_t width;
+	std::uint16_t height;
+	std::uint16_t seed;
+	static constexpr Opcode opcode = Opcode::S_WorldInit;
+	//void Serialize(TArray<uint8>& byteArray) const;
+	static WorldInitServerPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
 
 struct EnemySpawnClientPacket
 {

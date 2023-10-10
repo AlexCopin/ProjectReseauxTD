@@ -31,10 +31,13 @@ public:
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	void Deinitialize() override;
-
+	
+	UFUNCTION(BlueprintCallable)
+	void SendWorldInitPacket(FWorldInitPacket packet);
 
 
 private:
+	void send_packet(ENetPacket* packet);
 	ENetHost* Host = nullptr;
 	ENetPeer* ServerPeer = nullptr;
 };

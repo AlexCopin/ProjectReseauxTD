@@ -3,9 +3,9 @@
 
 #include "Containers/Array.h"
 #include <string>
-//#include "Protocol.generated.h"
-
 #include <enet6/enet.h>
+#include "Protocol.generated.h"
+
 
 UENUM(BlueprintType)
 enum class EOpcode : uint8
@@ -79,16 +79,14 @@ USTRUCT(BlueprintType)
 struct FWorldInitPacket
 {
 	GENERATED_BODY()
-public:
-
-	std::uint16_t width;
-	std::uint16_t height;
-	std::uint32_t seed;
-private:
-
+public:			  
+				  
+	uint16 width; 
+	uint16 height;
+	uint32 seed;
 	static constexpr EOpcode opcode = EOpcode::S_WorldInit;
-	void Serialize(std::vector<std::uint8_t>& byteArray) const;
-	static FWorldInitPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+	void Serialize(TArray<uint8>& byteArray) const;
+	//static FWorldInitPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 USTRUCT(BlueprintType)
@@ -99,9 +97,9 @@ public:
 
 	uint8 line;
 	EEnemyType enemyType;
+	static constexpr EOpcode opcode = EOpcode::C_EnemySpawn;
 private:
 
-	static constexpr EOpcode opcode = EOpcode::C_EnemySpawn;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 	static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
@@ -116,7 +114,7 @@ template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags
 
 	Serialize_u8(byteArray, static_cast<uint8>(T::opcode));
 	packet.Serialize(byteArray);
-
+		
 	// On copie le contenu de ce vector dans un packet enet, et on l'envoie au peer
-	return enet_packet_create(byteArray.data(), byteArray.size(), flags);
+	return enet_packet_create(byteArray.GetData(), byteArray.Num(), flags);
 }
