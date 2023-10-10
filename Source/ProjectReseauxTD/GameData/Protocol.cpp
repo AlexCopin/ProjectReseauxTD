@@ -1,129 +1,187 @@
 #include "Protocol.h"
 #include "Containers/Array.h"
-#include "terse/utils/Endianness.h"
 
 void Serialize_f32(TArray<uint8>& byteArray, float value)
 {
-	
 	int32 offset = byteArray.Num();
-	byteArray.Reserve(offset + sizeof(value));
+	byteArray.SetNum(offset + sizeof(value));
 
 	return Serialize_f32(byteArray, offset, value);
 }
 
 void Serialize_f32(TArray<uint8>& byteArray, int32 offset, float value)
 {
-	uint32 v = htonf(value);
-	int32 size = byteArray.Num();
-	check((offset + sizeof(v)) <= size);
+	float v = NETWORK_ORDERF(value);
+
+	check((offset + sizeof(v)) <= byteArray.Num());
 	std::memcpy(&byteArray[offset], &v, sizeof(v));
 }
 
 void Serialize_i8(TArray<uint8>& byteArray, int8 value)
 {
+	return Serialize_u8(byteArray, StaticCast<uint8>(value));
 }
 
 void Serialize_i8(TArray<uint8>& byteArray, int32 offset, int8 value)
 {
+	return Serialize_u8(byteArray, offset, StaticCast<uint8>(value));
 }
 
 void Serialize_i16(TArray<uint8>& byteArray, int16 value)
 {
+	return Serialize_u16(byteArray, StaticCast<uint16>(value));
 }
 
 void Serialize_i16(TArray<uint8>& byteArray, int32 offset, int16 value)
 {
+	return Serialize_u16(byteArray, offset, StaticCast<uint16>(value));
 }
 
 void Serialize_i32(TArray<uint8>& byteArray, int32 value)
 {
+	Serialize_u32(byteArray, StaticCast<uint32>(value));
 }
 
 void Serialize_i32(TArray<uint8>& byteArray, int32 offset, int32 value)
 {
+	Serialize_u32(byteArray, offset, StaticCast<uint32>(value));
 }
 
 void Serialize_u8(TArray<uint8>& byteArray, uint8 value)
 {
+	int32 offset = byteArray.Num();
+	byteArray.SetNum(offset + sizeof(value));
+
+	return Serialize_u8(byteArray, offset, value);
 }
 
 void Serialize_u8(TArray<uint8>& byteArray, int32 offset, uint8 value)
 {
+	check(offset < byteArray.Num());
+	byteArray[offset] = value;
 }
 
 void Serialize_u16(TArray<uint8>& byteArray, uint16 value)
 {
+	int32 offset = byteArray.Num();
+	byteArray.SetNum(offset + sizeof(value));
+
+	return Serialize_u16(byteArray, offset, value);
 }
 
 void Serialize_u16(TArray<uint8>& byteArray, int32 offset, uint16 value)
 {
+	value = NETWORK_ORDER16(value);
+
+	check(offset + sizeof(value) <= byteArray.Num());
+	std::memcpy(&byteArray[offset], &value, sizeof(value));
 }
 
 void Serialize_u32(TArray<uint8>& byteArray, uint32 value)
 {
+	int32 offset = byteArray.Num();
+	byteArray.SetNum(offset + sizeof(value));
+
+	return Serialize_u32(byteArray, offset, value);
 }
 
 void Serialize_u32(TArray<uint8>& byteArray, int32 offset, uint32 value)
 {
+	value = NETWORK_ORDER32(value);
+
+	check(offset + sizeof(value) <= byteArray.Num());
+	std::memcpy(&byteArray[offset], &value, sizeof(value));
 }
 
 void Serialize_str(TArray<uint8>& byteArray, const FString& value)
 {
+	return Serialize_str(byteArray, std::string(TCHAR_TO_UTF8(*value)));
+}
+
+void Serialize_str(TArray<uint8>& byteArray, const std::string& value)
+{
+	int32 offset = byteArray.Num();
+
+	byteArray.SetNum(offset + sizeof(int32) + value.size());
+	return Serialize_str(byteArray, offset, value);
 }
 
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const FString& value)
 {
+	return Serialize_str(byteArray, offset, std::string(TCHAR_TO_UTF8(*value)));
+}
+
+void Serialize_str(TArray<uint8>& byteArray, int32 offset, const std::string& value)
+{
+	Serialize_u32(byteArray, offset, StaticCast<uint32>(value.size()));
+	offset += sizeof(uint32);
+
+	if (!value.empty())
+		std::memcpy(&byteArray[offset], value.data(), value.size());
 }
 
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset)
 {
-	return 0.0f;
+	float value;
+	std::memcpy(&value, &byteArray[offset], sizeof(value));
+
+	offset += sizeof(value);
+
+	return NETWORK_ORDERF(value);;
 }
 
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset)
 {
-	return int8();
+	return StaticCast<int8>(Unserialize_u8(byteArray, offset));
 }
 
 int16 Unserialize_i16(const TArray<uint8>& byteArray, int32& offset)
 {
-	return int16();
+	return StaticCast<int16>(Unserialize_u16(byteArray, offset));
 }
 
 int32 Unserialize_i32(const TArray<uint8>& byteArray, int32& offset)
 {
-	return int32();
+	return StaticCast<int32>(Unserialize_u32(byteArray, offset));
 }
 
 uint8 Unserialize_u8(const TArray<uint8>& byteArray, int32& offset)
 {
-	return uint8();
+	uint8 value = byteArray[offset];
+	offset += sizeof(value);
+
+	return value;
 }
 
 uint16 Unserialize_u16(const TArray<uint8>& byteArray, int32& offset)
 {
-	return uint16();
+	std::uint16_t value;
+	std::memcpy(&value, &byteArray[offset], sizeof(value));
+	value = NETWORK_ORDER16(value);
+
+	offset += sizeof(value);
+
+	return value;
 }
 
 uint32 Unserialize_u32(const TArray<uint8>& byteArray, int32& offset)
 {
-	return uint32();
+	uint32 value;
+	std::memcpy(&value, &byteArray[offset], sizeof(value));
+	value = NETWORK_ORDER32(value);
+
+	offset += sizeof(value);
+
+	return value;
 }
 
 FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset)
 {
-	return FString();
-}
+	uint32 length = Unserialize_u32(byteArray, offset);
+	std::string str(length, ' ');
+	std::memcpy(&str[0], &byteArray[offset], length);
 
+	offset += length;
 
-inline uint32 htonf(float f32)
-{
-	union {
-		float f;
-		uint32_t u;
-	} value;
-
-	value.f = f32;
-	return value.u;
-	//return ntohl(value.u);
+	return UTF8_TO_TCHAR(str.data());
 }
