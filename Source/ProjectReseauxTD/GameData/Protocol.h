@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 
 #include "Containers/Array.h"
+#include <string>
 //#include "Protocol.generated.h"
 
 enum class Opcode : uint8
@@ -26,7 +27,9 @@ void Serialize_u16(TArray<uint8>& byteArray, int32 offset, uint16 value);
 void Serialize_u32(TArray<uint8>& byteArray, uint32 value);
 void Serialize_u32(TArray<uint8>& byteArray, int32 offset, uint32 value);
 void Serialize_str(TArray<uint8>& byteArray, const  FString& value);
+void Serialize_str(TArray<uint8>& byteArray, const  std::string& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  FString& value);
+void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  std::string& value);
 
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset);
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset);
@@ -36,6 +39,3 @@ uint8 Unserialize_u8(const TArray<uint8>& byteArray, int32& offset);
 uint16 Unserialize_u16(const TArray<uint8>& byteArray, int32& offset);
 uint32 Unserialize_u32(const TArray<uint8>& byteArray, int32& offset);
 FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset);
-
-
-inline uint32 htonf(float value);
