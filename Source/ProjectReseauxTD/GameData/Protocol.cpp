@@ -4,10 +4,8 @@
 
 void Serialize_f32(TArray<uint8>& byteArray, float value)
 {
-	FArchive arch;
-	byteArray.CountBytes(arch);
 	
-	int32 offset = (int32)arch.TotalSize();
+	int32 offset = byteArray.Num();
 	byteArray.Reserve(offset + sizeof(value));
 
 	return Serialize_f32(byteArray, offset, value);
@@ -16,9 +14,8 @@ void Serialize_f32(TArray<uint8>& byteArray, float value)
 void Serialize_f32(TArray<uint8>& byteArray, int32 offset, float value)
 {
 	uint32 v = htonf(value);
-	FArchive arch;
-	byteArray.CountBytes(arch);
-	check((offset + sizeof(v)) <= (int32)arch.TotalSize());
+	int32 size = byteArray.Num();
+	check((offset + sizeof(v)) <= size);
 	std::memcpy(&byteArray[offset], &v, sizeof(v));
 }
 
