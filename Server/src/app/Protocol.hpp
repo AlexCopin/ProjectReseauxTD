@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "Characters.h"
 
 enum class Opcode : std::uint8_t
 {
@@ -45,7 +46,7 @@ std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::siz
 struct EnemySpawnClientPacket
 {
 	std::uint8_t line;
-	std::uint8_t enemyType;
+	EnemyType enemyType;
 
 	static constexpr Opcode opcode = Opcode::C_EnemySpawn;
 	static EnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
@@ -62,14 +63,25 @@ struct EnemySpawnServerPacket
 };
 
 
-struct FSpawnTurretServerPacket
+struct TowerSpawnClientPacket
 {
+	TowerType towerType;
+	float posX;
+	float posY;
+	float posZ;
+	std::uint32_t radius;
 
+	static constexpr Opcode opcode = Opcode::C_TowerSpawn;
+	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+struct TowerSpawnServerPacket
+{
 	std::uint8_t towerType;
 	float posX;
 	float posY;
 	float posZ;
 	std::uint32_t range;
+	std::uint32_t radius;
 
 	static constexpr Opcode opcode = Opcode::S_TowerSpawn;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;

@@ -9,7 +9,7 @@
 #include "TD_NetworkSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawnReceived, FEnemySpawnServerPacket, packet);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSpawnReceived, FSpawnTurretServerPacket, packet);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerSpawnReceived, FTowerSpawnServerPacket, packet);
 
 UCLASS()
 class PROJECTRESEAUXTD_API UTD_NetworkSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
@@ -36,12 +36,12 @@ public:
 	void SendEnemySpawnClientPacket(FEnemySpawnClientPacket packet);
 
 	UFUNCTION(BlueprintCallable)
-	void SendSpawnTurretClientPacket(FSpawnTurretClientPacket packet);
+	void SendSpawnTowerClientPacket(FTowerSpawnClientPacket packet);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemySpawnReceived OnEnemySpawnEvent;
 	UPROPERTY(BlueprintAssignable)
-	FOnTurretSpawnReceived OnTurretSpawnEvent;
+	FOnTowerSpawnReceived OnTowerSpawnEvent;
 
 private:
 	void handle_message(const std::vector<std::uint8_t>& message);

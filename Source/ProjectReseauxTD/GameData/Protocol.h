@@ -109,7 +109,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FSpawnTurretClientPacket
+struct FTowerSpawnClientPacket
 {
 	GENERATED_BODY()
 public:
@@ -118,14 +118,14 @@ public:
 	float posX;
 	float posY;
 	float posZ;
+	int32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
 	void Serialize(TArray<uint8>& byteArray) const;
-	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 USTRUCT(BlueprintType)
-struct FSpawnTurretServerPacket
+struct FTowerSpawnServerPacket
 {
 	GENERATED_BODY()
 public:
@@ -135,10 +135,10 @@ public:
 	float posY;
 	float posZ;
 	int32 range;
+	int32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
-	//void Serialize(TArray<uint8>& byteArray) const;
-	static FSpawnTurretServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+	static FTowerSpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 

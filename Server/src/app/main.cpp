@@ -6,23 +6,19 @@
 #include <string>
 #include <vector>
 #include "Protocol.hpp"
+#include "Characters.h"
 
 struct ServerData
 {
 	ENetHost* host;
 };
 
-struct Enemy
-{
-	std::uint32_t index; //< La position du joueur dans le tableau (sert d'id numérique lors de l'affichage)
-	std::uint8_t name; //< Nom du joueur
-
-};
 
 struct GameData
 {
 	std::uint32_t currentEnemyIndex = 0;
 	std::vector<Enemy> enemies;
+	std::vector<Tower> towers;
 };
 
 void tick(ServerData& serverData);
@@ -126,6 +122,11 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			EnemySpawnClientPacket enemyPacket = EnemySpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "enemyPacket received" << std::endl;
+			break;
+		case Opcode::S_TowerSpawn:
+			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
+
+			std::cout << "towerSpawnPacket received" << std::endl;
 			break;
 
 	}
