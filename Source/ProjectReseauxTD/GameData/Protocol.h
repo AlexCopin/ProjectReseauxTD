@@ -13,18 +13,25 @@ enum class EOpcode : uint8
 	C_PlayerName,
 	C_PlayerInput,
 	C_EnemySpawn,
+	C_TowerSpawn,
 	S_PlayerList,
-	S_WorldInit,
 	S_EnemySpawn,
 	S_Gold
 };
 
 UENUM(BlueprintType)
-enum class EEnemyType
+enum class EEnemyType : uint8
 {
 	Fast,
 	Gold,
 	Tank
+};
+UENUM(BlueprintType)
+enum class ETowerType : uint8
+{
+	Normal,
+	Slow,
+	Fast
 };
 
 void Serialize_f32(TArray<uint8>& byteArray, float value);
@@ -74,21 +81,6 @@ struct PlayerNamePacket
 // Le serveur envoie � un client la liste de tous les joueurs connect�s
 //0
 
-// Le serveur indique au client comment g�n�rer le monde
-USTRUCT(BlueprintType)
-struct FWorldInitPacket
-{
-	GENERATED_BODY()
-public:			  
-				  
-	uint16 width; 
-	uint16 height;
-	uint32 seed;
-	static constexpr EOpcode opcode = EOpcode::S_WorldInit;
-	void Serialize(TArray<uint8>& byteArray) const;
-	//static FWorldInitPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
-};
-
 USTRUCT(BlueprintType)
 struct FEnemySpawnClientPacket
 {
@@ -98,12 +90,37 @@ public:
 	uint8 line;
 	EEnemyType enemyType;
 	static constexpr EOpcode opcode = EOpcode::C_EnemySpawn;
-private:
-
-	void Serialize(std::vector<std::uint8_t>& byteArray) const;
-	static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+	void Serialize(TArray<uint8>& byteArray) const;
+	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
+USTRUCT(BlueprintType)
+struct FEnemySpawnServerPacket
+{
+	GENERATED_BODY()
+public:
+	uint8 line;
+	uint8 enemyType;
+	uint32 index;
+
+	static constexpr EOpcode opcode = EOpcode::S_EnemySpawn;
+	static FEnemySpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FSpawnTurretClientPacket
+{
+	GENERATED_BODY()
+public:
+
+	ETowerType towerType;
+	int32 posX;
+	int32 posY;
+
+	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
+	void Serialize(TArray<uint8>& byteArray) const;
+	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
 
 
 // Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es

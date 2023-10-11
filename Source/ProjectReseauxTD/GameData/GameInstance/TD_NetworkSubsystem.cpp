@@ -2,6 +2,7 @@
 
 
 #include "TD_NetworkSubsystem.h"
+
 DEFINE_LOG_CATEGORY_STATIC(ENet6, Log, All);
 
 
@@ -17,9 +18,6 @@ void UTD_NetworkSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Not connected!"));
 		return;
 	}
-	FWorldInitPacket packetInitWorld;
-	packetInitWorld.height = 2;
-	SendWorldInitPacket(packetInitWorld);
 }
 
 void UTD_NetworkSubsystem::Deinitialize()
@@ -27,9 +25,13 @@ void UTD_NetworkSubsystem::Deinitialize()
 	enet_deinitialize();
 }
 
-void UTD_NetworkSubsystem::SendWorldInitPacket(FWorldInitPacket packet)
+void UTD_NetworkSubsystem::SendEnemySpawnClientPacket(FEnemySpawnClientPacket packet)
 {
 	send_packet(build_packet(packet, 0)); //< Comme nous envoyons réguliérement notre position, pas besoin de rendre ça fiable
+}
+void UTD_NetworkSubsystem::SendSpawnTurretClientPacket(FSpawnTurretClientPacket packet)
+{
+	send_packet(build_packet(packet, 0));
 }
 
 ETickableTickType UTD_NetworkSubsystem::GetTickableTickType() const
@@ -69,6 +71,14 @@ void UTD_NetworkSubsystem::Tick(float /*DeltaTime*/)
 				// On a reçu des données de la part du serveur (plus qu'à désérialiser ^_^)
 			case ENetEventType::ENET_EVENT_TYPE_RECEIVE:
 				UE_LOG(ENet6, Log, TEXT("Peer %u sent data (%u bytes)"), enet_peer_get_id(Event.peer), enet_packet_get_length(Event.packet));
+
+				// On a reçu un message ! Traitons-le
+				std::vector<std::uint8_t> content(Event.packet->dataLength); //< On copie son contenu dans un std::vector pour plus de facilité de gestion
+				std::memcpy(content.data(), Event.packet->data, Event.packet->dataLength);
+
+				// On gère le message qu'on a reçu
+				handle_message(content);
+
 				enet_packet_dispose(Event.packet);
 				break;
 			}
@@ -162,4 +172,25 @@ void UTD_NetworkSubsystem::send_packet(ENetPacket* packet)
 {
 	if(ServerPeer)
 		enet_peer_send(ServerPeer, 0, packet);
+}
+
+void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& message)
+{
+	TArray<uint8> messageArray;
+	for(std::uint8_t i : message)
+	{
+		messageArray.Add(i);
+	}
+	// On décode l'opcode pour savoir à quel type de message on a affaire
+	int32 offset = 0;
+	EOpcode opcode = static_cast<EOpcode>(Unserialize_u8(messageArray, offset));
+	switch (opcode)
+	{
+		case EOpcode::S_EnemySpawn:
+		{
+			FEnemySpawnServerPacket packet = FEnemySpawnServerPacket::Unserialize(messageArray, offset);
+			OnEnemySpawnEvent.Broadcast(packet);
+			break;
+		}
+	}
 }

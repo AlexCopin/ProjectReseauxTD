@@ -186,9 +186,24 @@ FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset)
 	return UTF8_TO_TCHAR(str.data());
 }
 
-void FWorldInitPacket::Serialize(TArray<uint8>& byteArray) const
+void FEnemySpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
-	Serialize_u16(byteArray, width);
-	Serialize_u16(byteArray, height);
-	Serialize_u32(byteArray, seed);
+	Serialize_u8(byteArray, line);
+	Serialize_u8(byteArray, (uint8)enemyType);
+}
+
+void FSpawnTurretClientPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_u8(byteArray, (uint8)towerType);
+	Serialize_u32(byteArray, posX);
+	Serialize_u32(byteArray, posY);
+}
+
+FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FEnemySpawnServerPacket packet;
+	packet.line = Unserialize_u8(byteArray, offset);
+	packet.enemyType = Unserialize_u8(byteArray, offset);
+	packet.index = Unserialize_u32(byteArray, offset);
+	return packet;
 }

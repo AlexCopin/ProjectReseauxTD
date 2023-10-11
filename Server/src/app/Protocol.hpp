@@ -9,8 +9,8 @@ enum class Opcode : std::uint8_t
 	C_PlayerName,
 	C_PlayerInput,
 	C_EnemySpawn,
+	C_TowerSpawn,
 	S_PlayerList,
-	S_WorldInit,
 	S_EnemySpawn,
 	S_Gold
 };
@@ -41,25 +41,21 @@ std::uint16_t Unserialize_u16(const std::vector<std::uint8_t>& byteArray, std::s
 std::uint32_t Unserialize_u32(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 
-
-struct WorldInitServerPacket
-{
-
-	std::uint16_t width;
-	std::uint16_t height;
-	std::uint16_t seed;
-	static constexpr Opcode opcode = Opcode::S_WorldInit;
-	//void Serialize(TArray<uint8>& byteArray) const;
-	static WorldInitServerPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
-};
-
 struct EnemySpawnClientPacket
 {
 	std::uint8_t line;
 	std::uint8_t enemyType;
 
-
-
 	static constexpr Opcode opcode = Opcode::C_EnemySpawn;
 	static EnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+struct EnemySpawnServerPacket
+{
+	std::uint8_t line;
+	std::uint8_t enemyType;
+	std::uint32_t index;
+
+	static constexpr Opcode opcode = Opcode::S_EnemySpawn;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
