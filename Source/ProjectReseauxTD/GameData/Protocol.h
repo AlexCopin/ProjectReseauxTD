@@ -16,6 +16,7 @@ enum class EOpcode : uint8
 	C_TowerSpawn,
 	S_PlayerList,
 	S_EnemySpawn,
+	S_TowerSpawn,
 	S_Gold
 };
 
@@ -114,12 +115,30 @@ struct FSpawnTurretClientPacket
 public:
 
 	ETowerType towerType;
-	int32 posX;
-	int32 posY;
+	float posX;
+	float posY;
+	float posZ;
 
 	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
 	void Serialize(TArray<uint8>& byteArray) const;
 	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FSpawnTurretServerPacket
+{
+	GENERATED_BODY()
+public:
+
+	uint8 towerType;
+	float posX;
+	float posY;
+	float posZ;
+	int32 range;
+
+	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
+	//void Serialize(TArray<uint8>& byteArray) const;
+	static FSpawnTurretServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 

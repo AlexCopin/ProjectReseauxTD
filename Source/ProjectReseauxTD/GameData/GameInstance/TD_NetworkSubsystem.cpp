@@ -27,7 +27,7 @@ void UTD_NetworkSubsystem::Deinitialize()
 
 void UTD_NetworkSubsystem::SendEnemySpawnClientPacket(FEnemySpawnClientPacket packet)
 {
-	send_packet(build_packet(packet, 0)); //< Comme nous envoyons réguliérement notre position, pas besoin de rendre ça fiable
+	send_packet(build_packet(packet, 0));
 }
 void UTD_NetworkSubsystem::SendSpawnTurretClientPacket(FSpawnTurretClientPacket packet)
 {

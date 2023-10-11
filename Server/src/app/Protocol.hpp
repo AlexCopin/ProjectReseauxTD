@@ -12,6 +12,7 @@ enum class Opcode : std::uint8_t
 	C_TowerSpawn,
 	S_PlayerList,
 	S_EnemySpawn,
+	S_TowerSpawn,
 	S_Gold
 };
 
@@ -57,5 +58,19 @@ struct EnemySpawnServerPacket
 	std::uint32_t index;
 
 	static constexpr Opcode opcode = Opcode::S_EnemySpawn;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
+};
+
+
+struct FSpawnTurretServerPacket
+{
+
+	std::uint8_t towerType;
+	float posX;
+	float posY;
+	float posZ;
+	std::uint32_t range;
+
+	static constexpr Opcode opcode = Opcode::S_TowerSpawn;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };

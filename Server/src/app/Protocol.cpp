@@ -222,3 +222,12 @@ void EnemySpawnServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) con
 	Serialize_u8(byteArray, enemyType);
 	Serialize_u32(byteArray, index);
 }
+
+void FSpawnTurretServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u8(byteArray, towerType);
+	Serialize_f32(byteArray, posX);
+	Serialize_f32(byteArray, posY);
+	Serialize_f32(byteArray, posZ);
+	Serialize_u32(byteArray, range);
+}

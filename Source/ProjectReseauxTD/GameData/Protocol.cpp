@@ -195,8 +195,9 @@ void FEnemySpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 void FSpawnTurretClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
 	Serialize_u8(byteArray, (uint8)towerType);
-	Serialize_u32(byteArray, posX);
-	Serialize_u32(byteArray, posY);
+	Serialize_f32(byteArray, posX);
+	Serialize_f32(byteArray, posY);
+	Serialize_f32(byteArray, posZ);
 }
 
 FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
@@ -205,5 +206,16 @@ FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>
 	packet.line = Unserialize_u8(byteArray, offset);
 	packet.enemyType = Unserialize_u8(byteArray, offset);
 	packet.index = Unserialize_u32(byteArray, offset);
+	return packet;
+}
+
+FSpawnTurretServerPacket FSpawnTurretServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FSpawnTurretServerPacket packet;
+	packet.towerType = Unserialize_u8(byteArray, offset);
+	packet.posX = Unserialize_f32(byteArray, offset);
+	packet.posY = Unserialize_f32(byteArray, offset);
+	packet.posZ = Unserialize_f32(byteArray, offset);
+	packet.range = Unserialize_u32(byteArray, offset);
 	return packet;
 }
