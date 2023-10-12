@@ -120,6 +120,30 @@ void Serialize_str(TArray<uint8>& byteArray, int32 offset, const std::string& va
 		std::memcpy(&byteArray[offset], value.data(), value.size());
 }
 
+void Serialize_v3(TArray<uint8>& byteArray, FVector value)
+{
+	Serialize_f32(byteArray, value.X);
+	Serialize_f32(byteArray, value.Y);
+	Serialize_f32(byteArray, value.Z);
+}
+
+void Serialize_v3(TArray<uint8>& byteArray, int32 offset, FVector value)
+{
+	Serialize_f32(byteArray, offset, value.X);
+	Serialize_f32(byteArray, offset, value.Y);
+	Serialize_f32(byteArray, offset, value.Z);
+}
+
+FVector Unserialize_v3(const TArray<uint8>& byteArray, int32& offset)
+{
+	FVector returnValue;
+	returnValue.X = Unserialize_f32(byteArray, offset);
+	returnValue.Y = Unserialize_f32(byteArray, offset);
+	returnValue.Z = Unserialize_f32(byteArray, offset);
+
+	return returnValue;
+}
+
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset)
 {
 	float value;
@@ -192,6 +216,14 @@ void FEnemySpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 	Serialize_u8(byteArray, (uint8)enemyType);
 }
 
+void FEnemyPathClientPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_u8(byteArray, elementsNumber);
+
+	for (auto i = 0; i < elementsNumber; i++)
+		Serialize_v3(byteArray, pathPoints[i]);
+}
+
 void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
 	Serialize_u8(byteArray, (uint8)towerType);
@@ -201,12 +233,25 @@ void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 	Serialize_u32(byteArray, radius);
 }
 
+
 FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
 {
 	FEnemySpawnServerPacket packet;
 	packet.line = Unserialize_u8(byteArray, offset);
 	packet.enemyType = Unserialize_u8(byteArray, offset);
 	packet.index = Unserialize_u32(byteArray, offset);
+	return packet;
+}
+
+FEnemyPositionServerPacket FEnemyPositionServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FEnemyPositionServerPacket packet;
+	packet.elementsNumber = Unserialize_u8(byteArray, offset);
+
+	for (auto i = 0; i < packet.elementsNumber; i++)
+	{
+		packet.pathPoints[i] = Unserialize_v3(byteArray, offset);
+	}
 	return packet;
 }
 
@@ -220,6 +265,13 @@ FTowerSpawnServerPacket FTowerSpawnServerPacket::Unserialize(const TArray<uint8>
 	packet.range = Unserialize_u32(byteArray, offset);
 	packet.radius = Unserialize_u32(byteArray, offset);
 	return packet;
+}
+
+void FCastlePositionClientPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_f32(byteArray, posX);
+	Serialize_f32(byteArray, posY);
+	Serialize_f32(byteArray, posZ);
 }
 
 FPlayerInitServerPacket FPlayerInitServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)

@@ -13,6 +13,7 @@ enum class Opcode : std::uint8_t
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_CastlePosition,
 	S_PlayerInit,
 	S_EnemySpawn,
 	S_TowerSpawn,
@@ -86,6 +87,17 @@ struct TowerSpawnClientPacket
 	static constexpr Opcode opcode = Opcode::C_TowerSpawn;
 	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
+
+struct CastlePositionClientPacket
+{
+	float posX;
+	float posY;
+	float posZ;
+
+	static constexpr Opcode opcode = Opcode::C_CastlePosition;
+	static CastlePositionClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
 struct TowerSpawnServerPacket
 {
 	std::uint8_t towerType;
@@ -100,10 +112,10 @@ struct TowerSpawnServerPacket
 };
 
 
-// Petite fonction d'aide pour construire un packet ENet à partir d'une de nos structures de packet, insère automatiquement l'opcode au début des données
+// Petite fonction d'aide pour construire un packet ENet ï¿½ partir d'une de nos structures de packet, insï¿½re automatiquement l'opcode au dï¿½but des donnï¿½es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)
 {
-	// On sérialise l'opcode puis le contenu du packet dans un std::vector<std::uint8_t>
+	// On sï¿½rialise l'opcode puis le contenu du packet dans un std::vector<std::uint8_t>
 	std::vector<std::uint8_t> byteArray;
 
 	Serialize_u8(byteArray, static_cast<std::uint8_t>(T::opcode));

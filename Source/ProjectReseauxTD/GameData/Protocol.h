@@ -3,6 +3,7 @@
 
 #include "Containers/Array.h"
 #include <string>
+#include "Math/Vector.h"
 #include <enet6/enet.h>
 #include "Protocol.generated.h"
 
@@ -14,8 +15,11 @@ enum class EOpcode : uint8
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_EnemyPath,
+	C_CastlePosition,
 	S_PlayerInit,
 	S_EnemySpawn,
+	S_EnemyPos,
 	S_TowerSpawn,
 	S_Gold
 };
@@ -68,6 +72,8 @@ void Serialize_str(TArray<uint8>& byteArray, const  FString& value);
 void Serialize_str(TArray<uint8>& byteArray, const  std::string& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  FString& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  std::string& value);
+void Serialize_v3(TArray<uint8>& byteArray, FVector value);
+void Serialize_v3(TArray<uint8>& byteArray, int32 offset, FVector value);
 
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset);
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset);
@@ -78,10 +84,6 @@ uint16 Unserialize_u16(const TArray<uint8>& byteArray, int32& offset);
 uint32 Unserialize_u32(const TArray<uint8>& byteArray, int32& offset);
 FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset);
 
-
-inline uint32 htonf(float value);
-
-
 USTRUCT(BlueprintType)
 struct FPlayerInitServerPacket
 {
@@ -89,8 +91,10 @@ struct FPlayerInitServerPacket
 public:
 	static constexpr EOpcode opcode = EOpcode::S_PlayerInit;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerType type;
-	uint32 index;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 index;
 
 	static FPlayerInitServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
@@ -103,8 +107,11 @@ struct FEnemySpawnClientPacket
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 line;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyType enemyType;
+
 	static constexpr EOpcode opcode = EOpcode::C_EnemySpawn;
 	void Serialize(TArray<uint8>& byteArray) const;
 	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
@@ -115,9 +122,12 @@ struct FEnemySpawnServerPacket
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 line;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 enemyType;
-	uint32 index;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 index;
 
 	static constexpr EOpcode opcode = EOpcode::S_EnemySpawn;
 	static FEnemySpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
@@ -129,13 +139,34 @@ struct FTowerSpawnClientPacket
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETowerType towerType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posZ;
-	uint32 radius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
+	void Serialize(TArray<uint8>& byteArray) const;
+};
+
+USTRUCT(BlueprintType)
+struct FCastlePositionClientPacket
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posZ;
+
+	static constexpr EOpcode opcode = EOpcode::C_CastlePosition;
 	void Serialize(TArray<uint8>& byteArray) const;
 };
 
@@ -145,15 +176,52 @@ struct FTowerSpawnServerPacket
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 towerType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float posZ;
-	uint32 range;
-	uint32 radius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 range;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
 	static FTowerSpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyPathClientPacket
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> pathPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint8 elementsNumber;
+
+	static constexpr EOpcode opcode = EOpcode::C_EnemyPath;
+	void Serialize(TArray<uint8>& byteArray) const;
+	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyPositionServerPacket
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> pathPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint8 elementsNumber;
+
+	static constexpr EOpcode opcode = EOpcode::S_EnemyPos;
+	static FEnemyPositionServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 

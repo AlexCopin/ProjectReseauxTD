@@ -249,3 +249,12 @@ void PlayerInitServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) con
 	Serialize_u8(byteArray, (std::uint8_t)player.type);
 	Serialize_u32(byteArray, player.index);
 }
+
+CastlePositionClientPacket CastlePositionClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	CastlePositionClientPacket packet;
+	packet.posX = Unserialize_f32(byteArray, offset);
+	packet.posY = Unserialize_f32(byteArray, offset);
+	packet.posZ = Unserialize_f32(byteArray, offset);
+	return packet;
+}

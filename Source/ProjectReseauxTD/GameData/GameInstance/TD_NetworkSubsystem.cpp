@@ -26,11 +26,16 @@ void UTD_NetworkSubsystem::Deinitialize()
 	enet_deinitialize();
 }
 
-void UTD_NetworkSubsystem::SendEnemySpawnClientPacket(FEnemySpawnClientPacket packet)
+void UTD_NetworkSubsystem::SendEnemySpawnClientPacket(const FEnemySpawnClientPacket& packet)
 {
 	send_packet(build_packet(packet, 0));
 }
-void UTD_NetworkSubsystem::SendSpawnTowerClientPacket(FTowerSpawnClientPacket packet)
+void UTD_NetworkSubsystem::SendSpawnTowerClientPacket(const FTowerSpawnClientPacket& packet)
+{
+	send_packet(build_packet(packet, 0));
+}
+
+void UTD_NetworkSubsystem::SendCastlePositionPacket(const FCastlePositionClientPacket& packet)
 {
 	send_packet(build_packet(packet, 0));
 }
