@@ -14,4 +14,11 @@ class PROJECTRESEAUXTD_API ATD_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	ATD_PlayerController(const FObjectInitializer& ObjectInitializer);
+
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TObjectPtr<USceneComponent> SceneComponent;
 };
