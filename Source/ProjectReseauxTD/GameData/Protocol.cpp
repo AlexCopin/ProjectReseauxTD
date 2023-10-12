@@ -273,3 +273,12 @@ void FCastlePositionClientPacket::Serialize(TArray<uint8>& byteArray) const
 	Serialize_f32(byteArray, posY);
 	Serialize_f32(byteArray, posZ);
 }
+
+FPlayerInitServerPacket FPlayerInitServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FPlayerInitServerPacket packet;
+	packet.type = EPlayerType(Unserialize_u8(byteArray, offset));
+	packet.index = Unserialize_u32(byteArray, offset);
+
+	return packet;
+}

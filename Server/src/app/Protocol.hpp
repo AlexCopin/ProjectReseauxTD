@@ -5,14 +5,16 @@
 #include <string>
 #include "Characters.h"
 
+
+
 enum class Opcode : std::uint8_t
 {
-	C_PlayerName,
+	C_PlayerInit,
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
 	C_CastlePosition,
-	S_PlayerList,
+	S_PlayerInit,
 	S_EnemySpawn,
 	S_TowerSpawn,
 	S_Gold
@@ -43,6 +45,16 @@ std::uint8_t Unserialize_u8(const std::vector<std::uint8_t>& byteArray, std::siz
 std::uint16_t Unserialize_u16(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 std::uint32_t Unserialize_u32(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+
+
+struct PlayerInitServerPacket
+{
+	Player player;
+
+	static constexpr Opcode opcode = Opcode::S_PlayerInit;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
+};
+
 
 struct EnemySpawnClientPacket
 {
@@ -76,14 +88,14 @@ struct TowerSpawnClientPacket
 	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
-struct FCastlePositionClientPacket
+struct CastlePositionClientPacket
 {
 	float posX;
 	float posY;
 	float posZ;
 
 	static constexpr Opcode opcode = Opcode::C_CastlePosition;
-	static FCastlePositionClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+	static CastlePositionClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 struct TowerSpawnServerPacket
@@ -98,3 +110,17 @@ struct TowerSpawnServerPacket
 	static constexpr Opcode opcode = Opcode::S_TowerSpawn;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
+
+
+// Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es
+template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)
+{
+	// On s�rialise l'opcode puis le contenu du packet dans un std::vector<std::uint8_t>
+	std::vector<std::uint8_t> byteArray;
+
+	Serialize_u8(byteArray, static_cast<std::uint8_t>(T::opcode));
+	packet.Serialize(byteArray);
+
+	// On copie le contenu de ce vector dans un packet enet, et on l'envoie au peer
+	return enet_packet_create(byteArray.data(), byteArray.size(), flags);
+}

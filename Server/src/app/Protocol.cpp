@@ -244,9 +244,15 @@ TowerSpawnClientPacket TowerSpawnClientPacket::Unserialize(const std::vector<std
 	return packet;
 }
 
-FCastlePositionClientPacket FCastlePositionClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+void PlayerInitServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 {
-	FCastlePositionClientPacket packet;
+	Serialize_u8(byteArray, (std::uint8_t)player.type);
+	Serialize_u32(byteArray, player.index);
+}
+
+CastlePositionClientPacket CastlePositionClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	CastlePositionClientPacket packet;
 	packet.posX = Unserialize_f32(byteArray, offset);
 	packet.posY = Unserialize_f32(byteArray, offset);
 	packet.posZ = Unserialize_f32(byteArray, offset);

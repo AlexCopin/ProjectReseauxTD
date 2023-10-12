@@ -10,6 +10,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawnReceived, FEnemySpawnServerPacket, packet);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerSpawnReceived, FTowerSpawnServerPacket, packet);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerInit, EPlayerType, playerType);
 
 UCLASS()
 class PROJECTRESEAUXTD_API UTD_NetworkSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
@@ -48,6 +49,10 @@ public:
 	FOnEnemySpawnReceived OnEnemySpawnEvent;
 	UPROPERTY(BlueprintAssignable)
 	FOnTowerSpawnReceived OnTowerSpawnEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerInit OnPlayerInitEvent;
+
 
 private:
 	void handle_message(const std::vector<std::uint8_t>& message);

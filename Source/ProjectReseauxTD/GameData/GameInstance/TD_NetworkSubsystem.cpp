@@ -2,6 +2,7 @@
 
 
 #include "TD_NetworkSubsystem.h"
+#include "ProjectReseauxTD/GameData/PlayerController/TD_PlayerController.h"
 
 DEFINE_LOG_CATEGORY_STATIC(ENet6, Log, All);
 
@@ -197,6 +198,17 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 	EOpcode opcode = static_cast<EOpcode>(Unserialize_u8(messageArray, offset));
 	switch (opcode)
 	{
+		case EOpcode::S_PlayerInit:
+		{
+			FPlayerInitServerPacket packet = FPlayerInitServerPacket::Unserialize(messageArray, offset);
+			//PUT CODE TO SPAWN THE RIGHT PAWN
+			FString playerTypeStr = packet.type == EPlayerType::Attacker ? "Attacker" : "Defender";
+			FString debugString = FString::Printf(TEXT("Player Id = %f - PlayerType = %s"), (float)packet.index, *playerTypeStr);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, *debugString);
+			GetWorld()->GetFirstPlayerController<ATD_PlayerController>()->SpawnRightPawn(packet.type);
+			//OnPlayerInitEvent.Broadcast(packet.type);
+			break;
+		}
 		case EOpcode::S_EnemySpawn:
 		{
 			FEnemySpawnServerPacket packet = FEnemySpawnServerPacket::Unserialize(messageArray, offset);

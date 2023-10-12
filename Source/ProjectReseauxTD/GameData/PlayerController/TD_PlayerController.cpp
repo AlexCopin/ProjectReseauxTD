@@ -2,9 +2,38 @@
 
 
 #include "TD_PlayerController.h"
+#include "ProjectReseauxTD/GameData/GameInstance/TD_NetworkSubsystem.h"
 
 ATD_PlayerController::ATD_PlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(SceneComponent);
+}
+
+void ATD_PlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	if(auto NetworkSS = GetWorld()->GetGameInstance()->GetSubsystem<UTD_NetworkSubsystem>())
+	{
+		NetworkSS->OnPlayerInitEvent.AddDynamic(this, &ATD_PlayerController::SpawnRightPawn);
+	}
+}
+
+void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
+{
+	switch (playerType)
+	{
+	case EPlayerType::Attacker:
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Attacker spawn pawn"));
+		//Spawn pawn attacker
+		break;
+	case EPlayerType::Defender:
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Defender spawn pawn"));
+		//Spawn pawn Defender
+		break;
+	case EPlayerType::Spectator:
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Spectator spawn pawn"));
+		//Spawn pawn Spectator
+		break;
+	}
 }
