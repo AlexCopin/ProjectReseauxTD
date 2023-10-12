@@ -3,6 +3,7 @@
 
 #include "Containers/Array.h"
 #include <string>
+#include "Math/Vector.h"
 #include <enet6/enet.h>
 #include "Protocol.generated.h"
 
@@ -14,8 +15,10 @@ enum class EOpcode : uint8
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_EnemyPath,
 	S_PlayerList,
 	S_EnemySpawn,
+	S_EnemyPos,
 	S_TowerSpawn,
 	S_Gold
 };
@@ -53,6 +56,8 @@ void Serialize_str(TArray<uint8>& byteArray, const  FString& value);
 void Serialize_str(TArray<uint8>& byteArray, const  std::string& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  FString& value);
 void Serialize_str(TArray<uint8>& byteArray, int32 offset, const  std::string& value);
+void Serialize_v3(TArray<uint8>& byteArray, FVector value);
+void Serialize_v3(TArray<uint8>& byteArray, int32 offset, FVector value);
 
 float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset);
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset);
@@ -139,6 +144,33 @@ public:
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
 	static FTowerSpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyPathClientPacket
+{
+	GENERATED_BODY()
+public:
+
+	TArray<FVector> pathPoints;
+	uint8 elementsNumber;
+
+	static constexpr EOpcode opcode = EOpcode::C_EnemyPath;
+	void Serialize(TArray<uint8>& byteArray) const;
+	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyPositionServerPacket
+{
+	GENERATED_BODY()
+public:
+
+	TArray<FVector> pathPoints;
+	uint8 elementsNumber;
+
+	static constexpr EOpcode opcode = EOpcode::S_EnemyPos;
+	static FEnemyPositionServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 
