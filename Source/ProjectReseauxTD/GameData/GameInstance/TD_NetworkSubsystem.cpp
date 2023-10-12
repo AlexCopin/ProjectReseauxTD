@@ -30,6 +30,12 @@ void UTD_NetworkSubsystem::SendEnemySpawnClientPacket(const FEnemySpawnClientPac
 {
 	send_packet(build_packet(packet, 0));
 }
+
+void UTD_NetworkSubsystem::SendEnemyPathClientPacket(const FEnemyPathClientPacket& packet)
+{
+	send_packet(build_packet(packet, 0));
+}
+
 void UTD_NetworkSubsystem::SendSpawnTowerClientPacket(const FTowerSpawnClientPacket& packet)
 {
 	send_packet(build_packet(packet, 0));
@@ -214,6 +220,10 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 			FTowerSpawnServerPacket packet = FTowerSpawnServerPacket::Unserialize(messageArray, offset);
 			OnTowerSpawnEvent.Broadcast(packet);
 			break;
+		}
+		case EOpcode::S_EnemyPos:
+		{
+			FEnemyPositionServerPacket packet = FEnemyPositionServerPacket::Unserialize(messageArray, offset);
 		}
 	}
 }
