@@ -160,7 +160,7 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			std::cout << "enemyPacket received" << std::endl;
 			break;
 		}
-		case Opcode::S_TowerSpawn:
+		case Opcode::C_TowerSpawn:
 		{
 			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
 

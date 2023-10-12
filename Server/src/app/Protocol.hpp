@@ -13,9 +13,11 @@ enum class Opcode : std::uint8_t
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_EnemyPath,
 	C_CastlePosition,
 	S_PlayerInit,
 	S_EnemySpawn,
+	S_EnemyPos,
 	S_TowerSpawn,
 	S_Gold
 };
