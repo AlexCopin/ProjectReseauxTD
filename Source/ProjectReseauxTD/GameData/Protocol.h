@@ -165,12 +165,14 @@ struct FEnemyPathClientPacket
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> pathPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 elementsNumber;
 
 	static constexpr EOpcode opcode = EOpcode::C_EnemyPath;
 	void Serialize(TArray<uint8>& byteArray) const;
-	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 USTRUCT(BlueprintType)
