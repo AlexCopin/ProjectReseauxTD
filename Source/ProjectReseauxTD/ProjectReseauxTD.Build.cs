@@ -10,7 +10,7 @@ public class ProjectReseauxTD : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "ENet6Library", "RigLogicLib" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "ENet6Library", "RigLogicLib", "NavigationSystem" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
