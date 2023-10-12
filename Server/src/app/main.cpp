@@ -7,22 +7,25 @@
 #include <vector>
 #include "Protocol.hpp"
 #include "Characters.h"
+#include <map>
 
 struct ServerData
 {
 	ENetHost* host;
 };
 
-
 struct GameData
 {
+	ENetPeer* serverPeer;
+	std::uint32_t currentPlayerIndex = 0;
 	std::uint32_t currentEnemyIndex = 0;
-	std::vector<Enemy> enemies;
-	std::vector<Tower> towers;
+	std::map<std::uint32_t, Player> players;
+	std::map<std::uint32_t, Enemy> enemies;
+	std::map<std::uint32_t, Tower> towers;
 };
 
 void tick(ServerData& serverData);
-void handle_message(const std::vector<std::uint8_t>& message);
+void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
 
 int main()
 {
@@ -56,6 +59,7 @@ int main()
 
 	std::uint32_t nextTick = enet_time_get();
 
+	gameData.serverPeer = nullptr;
 	// Boucle principale
 	for (;;)
 	{
@@ -72,6 +76,30 @@ int main()
 				{
 					// Un nouveau joueur s'est connecté
 					case ENetEventType::ENET_EVENT_TYPE_CONNECT:
+						//Send info 
+						Player newPlayer;
+						newPlayer.index = gameData.currentPlayerIndex;
+						newPlayer.peer = event.peer;
+
+						switch(gameData.currentPlayerIndex)
+						{
+						case 0:
+							newPlayer.type = PlayerType::Attacker;
+							break;
+						case 1:
+							newPlayer.type = PlayerType::Defender;
+							break;
+						default:
+							newPlayer.type = PlayerType::Spectator;
+							break;
+						}
+						gameData.currentPlayerIndex++;
+						gameData.players.emplace(newPlayer.index ,std::move(newPlayer));
+
+						PlayerInitServerPacket packet;
+						packet.player = newPlayer;
+						enet_peer_send(event.peer, 0, build_packet(packet, 0));
+
 						std::cout << "Peer #" << enet_peer_get_id(event.peer) << " connected!" << std::endl;
 						break;
 
@@ -88,7 +116,7 @@ int main()
 						std::memcpy(content.data(), event.packet->data, event.packet->dataLength);
 
 						// On gère le message qu'on a reçu
-						handle_message(content);
+						handle_message(content, gameData);
 
 						// On n'oublie pas de libérer le packet
 						enet_packet_destroy(event.packet);
@@ -110,6 +138,13 @@ int main()
 }
 
 
+void send_packet(GameData& gameData, ENetPacket* packet)
+{
+	enet_peer_send(gameData.serverPeer, 0, packet);
+}
+
+
+
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData)
 {
 	// On traite les messages reçus par un joueur, différenciés par l'opcode
@@ -119,19 +154,23 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 	switch (opcode)
 	{
 		case Opcode::C_EnemySpawn:
+		{
 			EnemySpawnClientPacket enemyPacket = EnemySpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "enemyPacket received" << std::endl;
 			break;
+		}
 		case Opcode::S_TowerSpawn:
+		{
 			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "towerSpawnPacket received" << std::endl;
 			break;
-
+		}
 	}
 }
 
 void tick(ServerData& serverData)
 {
+	
 }

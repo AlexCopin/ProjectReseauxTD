@@ -221,3 +221,12 @@ FTowerSpawnServerPacket FTowerSpawnServerPacket::Unserialize(const TArray<uint8>
 	packet.radius = Unserialize_u32(byteArray, offset);
 	return packet;
 }
+
+FPlayerInitServerPacket FPlayerInitServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FPlayerInitServerPacket packet;
+	packet.type = EPlayerType(Unserialize_u8(byteArray, offset));
+	packet.index = Unserialize_u32(byteArray, offset);
+
+	return packet;
+}

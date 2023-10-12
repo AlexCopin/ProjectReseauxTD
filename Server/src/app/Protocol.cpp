@@ -243,3 +243,9 @@ TowerSpawnClientPacket TowerSpawnClientPacket::Unserialize(const std::vector<std
 	packet.radius = Unserialize_u32(byteArray, offset);
 	return packet;
 }
+
+void PlayerInitServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u8(byteArray, (std::uint8_t)player.type);
+	Serialize_u32(byteArray, player.index);
+}

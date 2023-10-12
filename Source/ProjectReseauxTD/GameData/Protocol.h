@@ -10,11 +10,11 @@
 UENUM(BlueprintType)
 enum class EOpcode : uint8
 {
-	C_PlayerName,
+	C_PlayerInit,
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
-	S_PlayerList,
+	S_PlayerInit,
 	S_EnemySpawn,
 	S_TowerSpawn,
 	S_Gold
@@ -34,6 +34,21 @@ enum class ETowerType : uint8
 	Slow,
 	Fast
 };
+UENUM(BlueprintType)
+enum class EPlayerType
+{
+	Attacker,
+	Defender,
+	Spectator
+};
+
+struct Player
+{
+	EPlayerType type;
+	std::uint32_t index;
+};
+
+
 
 void Serialize_f32(TArray<uint8>& byteArray, float value);
 void Serialize_f32(TArray<uint8>& byteArray, int32 offset, float value);
@@ -67,21 +82,21 @@ FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset);
 inline uint32 htonf(float value);
 
 
-// Un joueur souhaite renseigner son nom
-struct PlayerNamePacket
+USTRUCT(BlueprintType)
+struct FPlayerInitServerPacket
 {
-	static constexpr EOpcode opcode = EOpcode::C_PlayerName;
+	GENERATED_BODY()
+public:
+	static constexpr EOpcode opcode = EOpcode::S_PlayerInit;
 
-	std::string name;
+	EPlayerType type;
+	uint32 index;
 
-	void Serialize(std::vector<std::uint8_t>& byteArray) const;
-	static PlayerNamePacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+	static FPlayerInitServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 
 // Le serveur envoie � un client la liste de tous les joueurs connect�s
-//0
-
 USTRUCT(BlueprintType)
 struct FEnemySpawnClientPacket
 {
@@ -118,7 +133,7 @@ public:
 	float posX;
 	float posY;
 	float posZ;
-	int32 radius;
+	uint32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
 	void Serialize(TArray<uint8>& byteArray) const;
@@ -134,8 +149,8 @@ public:
 	float posX;
 	float posY;
 	float posZ;
-	int32 range;
-	int32 radius;
+	uint32 range;
+	uint32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
 	static FTowerSpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);

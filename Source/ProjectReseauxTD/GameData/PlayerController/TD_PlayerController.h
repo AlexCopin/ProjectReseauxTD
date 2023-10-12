@@ -17,8 +17,17 @@ class PROJECTRESEAUXTD_API ATD_PlayerController : public APlayerController
 public:
 	ATD_PlayerController(const FObjectInitializer& ObjectInitializer);
 
+	void BeginPlay() override;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<USceneComponent> SceneComponent;
+	UFUNCTION()
+	void SpawnRightPawn(EPlayerType playerType);
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<> AttackerPawnClass;*/
+
+private:
+
 };
