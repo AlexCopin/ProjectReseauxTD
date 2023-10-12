@@ -14,6 +14,7 @@ enum class EOpcode : uint8
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_CastlePosition,
 	S_PlayerList,
 	S_EnemySpawn,
 	S_TowerSpawn,
@@ -62,10 +63,6 @@ uint8 Unserialize_u8(const TArray<uint8>& byteArray, int32& offset);
 uint16 Unserialize_u16(const TArray<uint8>& byteArray, int32& offset);
 uint32 Unserialize_u32(const TArray<uint8>& byteArray, int32& offset);
 FString Unserialize_str(const TArray<uint8>& byteArray, int32& offset);
-
-
-inline uint32 htonf(float value);
-
 
 // Un joueur souhaite renseigner son nom
 struct PlayerNamePacket
@@ -121,6 +118,22 @@ public:
 	int32 radius;
 
 	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
+	void Serialize(TArray<uint8>& byteArray) const;
+};
+
+USTRUCT(BlueprintType)
+struct FCastlePositionClientPacket
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float posZ;
+
+	static constexpr EOpcode opcode = EOpcode::C_CastlePosition;
 	void Serialize(TArray<uint8>& byteArray) const;
 };
 

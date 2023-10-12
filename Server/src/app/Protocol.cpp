@@ -243,3 +243,12 @@ TowerSpawnClientPacket TowerSpawnClientPacket::Unserialize(const std::vector<std
 	packet.radius = Unserialize_u32(byteArray, offset);
 	return packet;
 }
+
+FCastlePositionClientPacket FCastlePositionClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	FCastlePositionClientPacket packet;
+	packet.posX = Unserialize_f32(byteArray, offset);
+	packet.posY = Unserialize_f32(byteArray, offset);
+	packet.posZ = Unserialize_f32(byteArray, offset);
+	return packet;
+}
