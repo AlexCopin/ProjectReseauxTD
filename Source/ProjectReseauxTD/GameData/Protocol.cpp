@@ -266,3 +266,10 @@ FTowerSpawnServerPacket FTowerSpawnServerPacket::Unserialize(const TArray<uint8>
 	packet.radius = Unserialize_u32(byteArray, offset);
 	return packet;
 }
+
+void FCastlePositionClientPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_f32(byteArray, posX);
+	Serialize_f32(byteArray, posY);
+	Serialize_f32(byteArray, posZ);
+}

@@ -33,10 +33,13 @@ public:
 	void Deinitialize() override;
 	
 	UFUNCTION(BlueprintCallable)
-	void SendEnemySpawnClientPacket(FEnemySpawnClientPacket packet);
+	void SendEnemySpawnClientPacket(const FEnemySpawnClientPacket& packet);
 
 	UFUNCTION(BlueprintCallable)
-	void SendSpawnTowerClientPacket(FTowerSpawnClientPacket packet);
+	void SendSpawnTowerClientPacket(const FTowerSpawnClientPacket& packet);
+
+	UFUNCTION(BlueprintCallable)
+	void SendCastlePositionPacket(const FCastlePositionClientPacket& packet);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemySpawnReceived OnEnemySpawnEvent;

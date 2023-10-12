@@ -11,6 +11,7 @@ enum class Opcode : std::uint8_t
 	C_PlayerInput,
 	C_EnemySpawn,
 	C_TowerSpawn,
+	C_CastlePosition,
 	S_PlayerList,
 	S_EnemySpawn,
 	S_TowerSpawn,
@@ -74,6 +75,17 @@ struct TowerSpawnClientPacket
 	static constexpr Opcode opcode = Opcode::C_TowerSpawn;
 	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
+
+struct FCastlePositionClientPacket
+{
+	float posX;
+	float posY;
+	float posZ;
+
+	static constexpr Opcode opcode = Opcode::C_CastlePosition;
+	static FCastlePositionClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
 struct TowerSpawnServerPacket
 {
 	std::uint8_t towerType;
