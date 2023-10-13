@@ -248,8 +248,7 @@ FEnemyPositionServerPacket FEnemyPositionServerPacket::Unserialize(const TArray<
 	FEnemyPositionServerPacket packet;
 	
 	packet.enemyIndex = Unserialize_u8(byteArray, offset);
-	for (const auto& pos : packet.pathPoints)
-		Unserialize_v3(byteArray, offset);
+	packet.nextPos = Unserialize_v3(byteArray, offset);
 
 	return packet;
 }
