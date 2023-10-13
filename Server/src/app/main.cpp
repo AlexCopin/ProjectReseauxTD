@@ -223,7 +223,7 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			EnemyPositionServerPacket enemyPositionPacket;
 			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
 
-			send_packet(gameData, build_packet(enemyPositionPacket));
+			send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
 		}
 	}
 }
