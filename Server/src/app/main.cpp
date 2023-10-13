@@ -16,7 +16,6 @@ struct ServerData
 
 struct GameData
 {
-	ENetPeer* serverPeer;
 	std::uint32_t currentPlayerIndex = 0;
 	std::uint32_t currentEnemyIndex = 0;
 	std::map<std::uint32_t, Player> players;
@@ -65,7 +64,6 @@ int main()
 
 	std::uint32_t nextTick = enet_time_get();
 
-	gameData.serverPeer = nullptr;
 	// Boucle principale
 	for (;;)
 	{
@@ -156,9 +154,9 @@ int main()
 }
 
 
-void send_packet(GameData& gameData, ENetPacket* packet)
+void send_packet(const Player& player, ENetPacket* packet)
 {
-	enet_peer_send(gameData.serverPeer, 0, packet);
+	enet_peer_send(player.peer, 0, packet);
 }
 
 void build_packet_gold(GameData& gameData)
@@ -171,12 +169,12 @@ void build_packet_gold(GameData& gameData)
 		case PlayerType::Attacker:
 			player.second.golds += AttackerGoldPerSecond;
 			packet.value = player.second.golds;
-			send_packet(gameData, build_packet(packet, 0));
+			send_packet(player.second, build_packet(packet, 0));
 			break;
 		case PlayerType::Defender:
 			player.second.golds += DefenderGoldPerSecond;
 			packet.value = player.second.golds;
-			send_packet(gameData, build_packet(packet, 0));
+			send_packet(player.second, build_packet(packet, 0));
 			break;
 		default:
 			break;
@@ -199,18 +197,11 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			std::cout << "enemyPacket received" << std::endl;
 			break;
 		}
-		case Opcode::S_TowerSpawn:
+		case Opcode::C_TowerSpawn:
 		{
 			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "towerSpawnPacket received" << std::endl;
-			break;
-		}
-		case Opcode::C_CastlePosition:
-		{
-			CastlePositionClientPacket castlePacket = CastlePositionClientPacket::Unserialize(message, offset);
-
-			std::cout << "castlePacket recived : " << castlePacket.posX << " " << castlePacket.posY << " " << castlePacket.posZ << std::endl;
 			break;
 		}
 	}

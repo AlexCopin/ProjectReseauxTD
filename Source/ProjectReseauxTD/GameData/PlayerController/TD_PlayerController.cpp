@@ -18,8 +18,12 @@ void ATD_PlayerController::BeginPlay()
 		NetworkSS->OnPlayerInitEvent.AddDynamic(this, &ATD_PlayerController::SpawnRightPawn);
 		NetworkSS->OnGoldChangeEvent.AddDynamic(this, &ATD_PlayerController::UpdateGold);
 	}
-	GoldWidget = CreateWidget<UGoldWidget>(this, GoldWidgetClass);
-	GoldWidget->AddToViewport();
+	if(ensure(GoldWidgetClass))
+	{
+		GoldWidget = CreateWidget<UGoldWidget>(this, GoldWidgetClass);
+		if(ensure(GoldWidget))
+			GoldWidget->AddToViewport();
+	}
 }
 
 void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
