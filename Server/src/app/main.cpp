@@ -199,11 +199,18 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			std::cout << "enemyPacket received" << std::endl;
 			break;
 		}
-		case Opcode::C_TowerSpawn:
+		case Opcode::S_TowerSpawn:
 		{
 			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "towerSpawnPacket received" << std::endl;
+			break;
+		}
+		case Opcode::C_CastlePosition:
+		{
+			CastlePositionClientPacket castlePacket = CastlePositionClientPacket::Unserialize(message, offset);
+
+			std::cout << "castlePacket recived : " << castlePacket.posX << " " << castlePacket.posY << " " << castlePacket.posZ << std::endl;
 			break;
 		}
 	}
