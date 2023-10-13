@@ -10,6 +10,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawnReceived, FEnemySpawnServerPacket, packet);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerSpawnReceived, FTowerSpawnServerPacket, packet);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyPositionReceived, FEnemyPositionServerPacket, packet);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerInit, EPlayerType, playerType);
 
 UCLASS()
@@ -47,12 +48,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemySpawnReceived OnEnemySpawnEvent;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnTowerSpawnReceived OnTowerSpawnEvent;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnEnemyPositionReceived OnEnemyPositionEvent;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerInit OnPlayerInitEvent;
-
 
 private:
 	void handle_message(const std::vector<std::uint8_t>& message);

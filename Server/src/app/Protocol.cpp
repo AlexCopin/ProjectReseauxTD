@@ -208,6 +208,23 @@ std::string Unserialize_str(const std::vector<std::uint8_t>& byteArray, std::siz
 	return str;
 }
 
+void Serialize_v3(std::vector<std::uint8_t>& byteArray, Vector3 value)
+{
+	Serialize_f32(byteArray, value.x);
+	Serialize_f32(byteArray, value.y);
+	Serialize_f32(byteArray, value.z);
+}
+
+Vector3 Unserialize_v3(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	Vector3 returnValue;
+	returnValue.x = Unserialize_f32(byteArray, offset);
+	returnValue.y = Unserialize_f32(byteArray, offset);
+	returnValue.z = Unserialize_f32(byteArray, offset);
+
+	return returnValue;
+}
+
 EnemySpawnClientPacket EnemySpawnClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
 {
 	EnemySpawnClientPacket packet;
@@ -256,5 +273,23 @@ CastlePositionClientPacket CastlePositionClientPacket::Unserialize(const std::ve
 	packet.posX = Unserialize_f32(byteArray, offset);
 	packet.posY = Unserialize_f32(byteArray, offset);
 	packet.posZ = Unserialize_f32(byteArray, offset);
+	return packet;
+}
+
+void EnemyPositionServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u8(byteArray, enemyIndex);
+	for (const auto& pos : pathPoints)
+		Serialize_v3(byteArray, pos);
+}
+
+EnemyPathClientPacket EnemyPathClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	EnemyPathClientPacket packet;
+	packet.pathPoints.resize(Unserialize_u8(byteArray, offset));
+
+	for (auto& pos : packet.pathPoints)
+		pos = Unserialize_v3(byteArray, offset);
+
 	return packet;
 }

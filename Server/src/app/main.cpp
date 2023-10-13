@@ -167,6 +167,15 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			std::cout << "towerSpawnPacket received" << std::endl;
 			break;
 		}
+		case Opcode::C_EnemyPath:
+		{
+			EnemyPathClientPacket enemyPathPacket = EnemyPathClientPacket::Unserialize(message, offset);
+
+			for (auto i = 0; i < enemyPathPacket.pathPoints.size(); i++)
+			{
+				std::cout << "enemyPathPacket received : " << enemyPathPacket.pathPoints[i] << std::endl;
+			}
+		}
 	}
 }
 

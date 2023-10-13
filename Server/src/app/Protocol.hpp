@@ -4,8 +4,7 @@
 #include <vector>
 #include <string>
 #include "Characters.h"
-
-
+#include "math/vector3.hpp"
 
 enum class Opcode : std::uint8_t
 {
@@ -113,6 +112,23 @@ struct TowerSpawnServerPacket
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
 
+struct EnemyPathClientPacket
+{
+	std::vector<Vector3> pathPoints;
+
+	static constexpr Opcode opcode = Opcode::C_EnemyPath;
+	static EnemyPathClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+struct EnemyPositionServerPacket
+{
+	std::vector<Vector3> pathPoints;
+
+	std::uint8_t enemyIndex;
+
+	static constexpr Opcode opcode = Opcode::S_EnemyPos;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
+};
 
 // Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)

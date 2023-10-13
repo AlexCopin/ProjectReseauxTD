@@ -1,6 +1,7 @@
 #pragma once
 
 #include <enet6/enet.h>
+#include "math/vector3.hpp"
 
 //Attacker
 constexpr std::uint32_t AttackerStartingGold = 100;
@@ -47,6 +48,7 @@ enum class TowerType
 struct Enemy
 {
 	std::uint32_t index;
+	std::vector<Vector3> pathPoints;
 };
 
 //See for inheritance

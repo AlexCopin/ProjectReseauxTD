@@ -52,8 +52,6 @@ struct Player
 	std::uint32_t index;
 };
 
-
-
 void Serialize_f32(TArray<uint8>& byteArray, float value);
 void Serialize_f32(TArray<uint8>& byteArray, int32 offset, float value);
 void Serialize_i8(TArray<uint8>& byteArray, int8 value);
@@ -202,9 +200,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> pathPoints;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 elementsNumber;
-
 	static constexpr EOpcode opcode = EOpcode::C_EnemyPath;
 	void Serialize(TArray<uint8>& byteArray) const;
 };
@@ -217,8 +212,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> pathPoints;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 elementsNumber;
+	uint8 enemyIndex;
 
 	static constexpr EOpcode opcode = EOpcode::S_EnemyPos;
 	static FEnemyPositionServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
