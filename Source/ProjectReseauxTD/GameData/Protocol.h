@@ -112,7 +112,6 @@ public:
 
 	static constexpr EOpcode opcode = EOpcode::C_EnemySpawn;
 	void Serialize(TArray<uint8>& byteArray) const;
-	//static FEnemySpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 USTRUCT(BlueprintType)
@@ -225,7 +224,7 @@ struct FEnemyPositionServerPacket
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FVector> pathPoints;
+	FVector nextPos;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 enemyIndex;

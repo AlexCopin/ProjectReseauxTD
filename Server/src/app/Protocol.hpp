@@ -122,13 +122,13 @@ struct EnemyPathClientPacket
 
 struct EnemyPositionServerPacket
 {
-	std::vector<Vector3> pathPoints;
-
+	Vector3 nextPos;
 	std::uint8_t enemyIndex;
 
 	static constexpr Opcode opcode = Opcode::S_EnemyPos;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
+
 struct GoldServerPacket
 {
 	std::uint32_t value;

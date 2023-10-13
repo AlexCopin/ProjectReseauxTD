@@ -279,8 +279,7 @@ CastlePositionClientPacket CastlePositionClientPacket::Unserialize(const std::ve
 void EnemyPositionServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 {
 	Serialize_u8(byteArray, enemyIndex);
-	for (const auto& pos : pathPoints)
-		Serialize_v3(byteArray, pos);
+	Serialize_v3(byteArray, nextPos);
 }
 
 EnemyPathClientPacket EnemyPathClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)

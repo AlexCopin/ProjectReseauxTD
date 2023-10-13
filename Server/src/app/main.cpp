@@ -221,6 +221,11 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			{
 				std::cout << "enemyPathPacket received : " << enemyPathPacket.pathPoints[i] << std::endl;
 			}
+
+			EnemyPositionServerPacket enemyPositionPacket;
+			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
+
+			send_packet(gameData, build_packet(enemyPositionPacket));
 		}
 	}
 }
