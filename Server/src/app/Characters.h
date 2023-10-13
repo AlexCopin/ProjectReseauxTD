@@ -1,6 +1,7 @@
 #pragma once
 
 #include <enet6/enet.h>
+#include "math/vector3.hpp"
 
 
 
@@ -49,6 +50,7 @@ enum class TowerType
 struct Enemy
 {
 	std::uint32_t index;
+	std::vector<Vector3> pathPoints;
 };
 
 //See for inheritance

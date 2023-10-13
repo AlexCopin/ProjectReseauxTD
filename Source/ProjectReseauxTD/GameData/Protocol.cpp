@@ -218,10 +218,10 @@ void FEnemySpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 
 void FEnemyPathClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
-	Serialize_u8(byteArray, elementsNumber);
+	Serialize_u8(byteArray, pathPoints.Num());
 
-	for (auto i = 0; i < elementsNumber; i++)
-		Serialize_v3(byteArray, pathPoints[i]);
+	for (const auto& pos : pathPoints)
+		Serialize_v3(byteArray, pos);
 }
 
 void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
@@ -246,12 +246,11 @@ FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>
 FEnemyPositionServerPacket FEnemyPositionServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
 {
 	FEnemyPositionServerPacket packet;
-	packet.elementsNumber = Unserialize_u8(byteArray, offset);
+	
+	packet.enemyIndex = Unserialize_u8(byteArray, offset);
+	for (const auto& pos : packet.pathPoints)
+		Unserialize_v3(byteArray, offset);
 
-	for (auto i = 0; i < packet.elementsNumber; i++)
-	{
-		packet.pathPoints[i] = Unserialize_v3(byteArray, offset);
-	}
 	return packet;
 }
 

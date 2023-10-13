@@ -224,6 +224,8 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 		case EOpcode::S_EnemyPos:
 		{
 			FEnemyPositionServerPacket packet = FEnemyPositionServerPacket::Unserialize(messageArray, offset);
+			OnEnemyPositionEvent.Broadcast(packet);
+			break;
 		}
 		case EOpcode::S_Gold:
 		{
