@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "PawnTower.generated.h"
+#include "TD_PawnTower.generated.h"
 
 UCLASS()
-class PROJECTRESEAUXTD_API APawnTower : public APawn
+class PROJECTRESEAUXTD_API ATD_PawnTower : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	APawnTower();
+	ATD_PawnTower();
 
 protected:
 	// Called when the game starts or when spawned

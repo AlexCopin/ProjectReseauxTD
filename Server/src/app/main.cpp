@@ -17,6 +17,8 @@ struct ServerData
 struct GameData
 {
 	std::uint32_t currentEnemyIndex = 0;
+	std::uint32_t goldAttacker = 0;
+	std::uint32_t goldDefender = 0;
 	std::map<std::uint32_t, Player> players;
 	std::map<std::uint32_t, Enemy> enemies;
 	std::map<std::uint32_t, Tower> towers;
@@ -116,7 +118,7 @@ int main()
 						{
 							GoldServerPacket packet;
 							newPlayer.type = PlayerType::Attacker;
-							newPlayer.golds = AttackerStartingGold;
+							gameData.goldAttacker = AttackerStartingGold;
 							packet.value = AttackerStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
 
@@ -127,7 +129,7 @@ int main()
 						{
 							GoldServerPacket packet;
 							newPlayer.type = PlayerType::Defender;
-							newPlayer.golds = DefenderStartingGold;
+							gameData.goldDefender = DefenderStartingGold;
 							packet.value = DefenderStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
 
@@ -153,7 +155,7 @@ int main()
 					{
 						auto player = gameData.players.find(enet_peer_get_id(event.peer));
 						std::cout << "Peer #" << player->second.index << " disconnected!" << std::endl;
-
+						gameData.players.erase(enet_peer_get_id(event.peer));
 						break;
 					}
 					// On a reçu des données d'un joueur
@@ -199,13 +201,13 @@ void build_packet_gold(GameData& gameData)
 		switch(player.second.type)
 		{
 		case PlayerType::Attacker:
-			player.second.golds += AttackerGoldPerSecond;
-			packet.value = player.second.golds;
+			gameData.goldAttacker += AttackerGoldPerSecond;
+			packet.value = gameData.goldAttacker;
 			send_packet(player.second, build_packet(packet, 0));
 			break;
 		case PlayerType::Defender:
-			player.second.golds += DefenderGoldPerSecond;
-			packet.value = player.second.golds;
+			gameData.goldDefender += DefenderGoldPerSecond;
+			packet.value = gameData.goldDefender;
 			send_packet(player.second, build_packet(packet, 0));
 			break;
 		default:

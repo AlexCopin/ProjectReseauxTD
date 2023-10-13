@@ -28,7 +28,6 @@ struct Player
 	ENetPeer* peer;
 	PlayerType type;
 	std::uint32_t index;
-	std::uint32_t golds;
 };
 
 

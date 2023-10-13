@@ -3,6 +3,9 @@
 
 #include "TD_PlayerController.h"
 #include "ProjectReseauxTD/GameData/GameInstance/TD_NetworkSubsystem.h"
+#include "ProjectReseauxTD/TowerAttacker/TD_PawnAttacker.h"
+#include "ProjectReseauxTD/TowerDefender/TD_PawnTower.h"
+#include "ProjectReseauxTD/Gold/TD_GoldWidget.h"
 
 ATD_PlayerController::ATD_PlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -20,7 +23,7 @@ void ATD_PlayerController::BeginPlay()
 	}
 	if(ensure(GoldWidgetClass))
 	{
-		GoldWidget = CreateWidget<UGoldWidget>(this, GoldWidgetClass);
+		GoldWidget = CreateWidget<UTD_GoldWidget>(this, GoldWidgetClass);
 		if(ensure(GoldWidget))
 			GoldWidget->AddToViewport();
 	}
@@ -31,13 +34,26 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 	switch (playerType)
 	{
 	case EPlayerType::Attacker:
+	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Attacker spawn pawn"));
-		//Spawn pawn attacker
+		ATD_PawnAttacker* pawn = GetWorld()->SpawnActor<ATD_PawnAttacker>(PawnAttackerClass);
+		pawn->SetOwner(this);
+		UnPossess();
+		SetPawn(pawn);
+		Possess(pawn);
 		break;
+	}
 	case EPlayerType::Defender:
+	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Defender spawn pawn"));
+		ATD_PawnTower* pawn = GetWorld()->SpawnActor<ATD_PawnTower>(PawnTowerClass);
+		pawn->SetOwner(this);
+		UnPossess();
+		SetPawn(pawn);
+		Possess(pawn);
 		//Spawn pawn Defender
 		break;
+	}
 	case EPlayerType::Spectator:
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Spectator spawn pawn"));
 		//Spawn pawn Spectator

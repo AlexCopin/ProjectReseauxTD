@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ProjectReseauxTD/Gold/GoldWidget.h"
 
 #include "TD_PlayerController.generated.h"
 
+class UTD_GoldWidget;
+class ATD_PawnAttacker;
+class ATD_PawnTower;
 /**
  * 
  */
@@ -31,16 +33,22 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<> AttackerPawnClass;*/
 
+	//Pawns
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PC | Pawns")
+	TSubclassOf<ATD_PawnAttacker> PawnAttackerClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PC | Pawns")
+	TSubclassOf<ATD_PawnTower> PawnTowerClass;
+
+
 	//Gold
 	UPROPERTY()
 	int32 CurrentGold;
-
 	UFUNCTION()
 	void UpdateGold(int32 value);
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PC | Gold")
+	TSubclassOf<UTD_GoldWidget> GoldWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UGoldWidget> GoldWidgetClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TObjectPtr<UGoldWidget> GoldWidget;
+	TObjectPtr<UTD_GoldWidget> GoldWidget;
 
 };

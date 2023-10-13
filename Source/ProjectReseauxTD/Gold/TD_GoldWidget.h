@@ -5,11 +5,11 @@
 #include "Components/RichTextBlock.h"
 
 
-#include "GoldWidget.generated.h"
+#include "TD_GoldWidget.generated.h"
 
 
 UCLASS()
-class UGoldWidget : public UUserWidget
+class UTD_GoldWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:

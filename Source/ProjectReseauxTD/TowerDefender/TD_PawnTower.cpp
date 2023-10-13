@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PawnTower.h"
+#include "TD_PawnTower.h"
 
 // Sets default values
-APawnTower::APawnTower()
+ATD_PawnTower::ATD_PawnTower()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,21 +12,21 @@ APawnTower::APawnTower()
 }
 
 // Called when the game starts or when spawned
-void APawnTower::BeginPlay()
+void ATD_PawnTower::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APawnTower::Tick(float DeltaTime)
+void ATD_PawnTower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void APawnTower::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATD_PawnTower::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
