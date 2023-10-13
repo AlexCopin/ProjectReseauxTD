@@ -43,6 +43,4 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UGoldWidget> GoldWidget;
 
-private:
-
 };
