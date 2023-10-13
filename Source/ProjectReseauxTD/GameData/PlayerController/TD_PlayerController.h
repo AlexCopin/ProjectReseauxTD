@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "ProjectReseauxTD/Gold/GoldWidget.h"
+
 #include "TD_PlayerController.generated.h"
 
 /**
@@ -20,6 +22,7 @@ public:
 	void BeginPlay() override;
 
 
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<USceneComponent> SceneComponent;
 	UFUNCTION()
@@ -27,6 +30,18 @@ public:
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<> AttackerPawnClass;*/
+
+	//Gold
+	UPROPERTY()
+	int32 CurrentGold;
+
+	UFUNCTION()
+	void UpdateGold(int32 value);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UGoldWidget> GoldWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TObjectPtr<UGoldWidget> GoldWidget;
 
 private:
 

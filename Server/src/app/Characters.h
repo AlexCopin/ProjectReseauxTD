@@ -3,16 +3,17 @@
 #include <enet6/enet.h>
 #include "math/vector3.hpp"
 
+
+
+//Gold
+constexpr std::int32_t TimerGold = 500;
 //Attacker
 constexpr std::uint32_t AttackerStartingGold = 100;
-
-
 constexpr std::uint32_t AttackerGoldPerSecond = 20;
 constexpr float Multiplicator = 1.2f;
 
 //Defender
 constexpr std::uint32_t DefenderStartingGold = 200;
-
 constexpr std::uint32_t DefenderGoldPerSecond = 5;
 
 enum class PlayerType : std::uint8_t
@@ -27,6 +28,7 @@ struct Player
 	ENetPeer* peer;
 	PlayerType type;
 	std::uint32_t index;
+	std::uint32_t golds;
 };
 
 

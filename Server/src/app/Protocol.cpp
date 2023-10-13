@@ -293,3 +293,8 @@ EnemyPathClientPacket EnemyPathClientPacket::Unserialize(const std::vector<std::
 
 	return packet;
 }
+
+void GoldServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u32(byteArray, value);
+}

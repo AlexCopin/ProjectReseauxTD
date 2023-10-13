@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#define NOMINMAX
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include <enet6/enet.h>
@@ -12,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawnReceived, FEnemySpawnSe
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerSpawnReceived, FTowerSpawnServerPacket, packet);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyPositionReceived, FEnemyPositionServerPacket, packet);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerInit, EPlayerType, playerType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChange, int32, value);
 
 UCLASS()
 class PROJECTRESEAUXTD_API UTD_NetworkSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerInit OnPlayerInitEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnGoldChange OnGoldChangeEvent;
 
 private:
 	void handle_message(const std::vector<std::uint8_t>& message);

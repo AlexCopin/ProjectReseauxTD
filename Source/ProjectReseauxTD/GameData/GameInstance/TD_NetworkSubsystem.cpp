@@ -227,5 +227,10 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 			OnEnemyPositionEvent.Broadcast(packet);
 			break;
 		}
+		case EOpcode::S_Gold:
+		{
+			FGoldServerPacket packet = FGoldServerPacket::Unserialize(messageArray, offset);
+			OnGoldChangeEvent.Broadcast(packet.value);
+		}
 	}
 }
