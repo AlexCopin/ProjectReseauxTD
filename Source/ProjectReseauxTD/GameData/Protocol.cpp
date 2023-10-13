@@ -282,3 +282,10 @@ FPlayerInitServerPacket FPlayerInitServerPacket::Unserialize(const TArray<uint8>
 
 	return packet;
 }
+
+FGoldServerPacket FGoldServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FGoldServerPacket packet;
+	packet.value = Unserialize_u32(byteArray, offset);
+	return packet;
+}

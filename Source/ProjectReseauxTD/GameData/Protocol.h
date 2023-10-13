@@ -210,6 +210,20 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FGoldServerPacket
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 value;
+
+	static constexpr EOpcode opcode = EOpcode::S_Gold;
+	static FGoldServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+};
+
+
+USTRUCT(BlueprintType)
 struct FEnemyPositionServerPacket
 {
 	GENERATED_BODY()
@@ -223,7 +237,6 @@ public:
 	static constexpr EOpcode opcode = EOpcode::S_EnemyPos;
 	static FEnemyPositionServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
-
 
 // Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)

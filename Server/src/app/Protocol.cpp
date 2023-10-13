@@ -258,3 +258,8 @@ CastlePositionClientPacket CastlePositionClientPacket::Unserialize(const std::ve
 	packet.posZ = Unserialize_f32(byteArray, offset);
 	return packet;
 }
+
+void GoldServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u32(byteArray, value);
+}

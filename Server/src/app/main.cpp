@@ -22,10 +22,16 @@ struct GameData
 	std::map<std::uint32_t, Player> players;
 	std::map<std::uint32_t, Enemy> enemies;
 	std::map<std::uint32_t, Tower> towers;
+
+	float goldTimer = TimerGold;
+
+	bool gameStarted = false;
 };
 
 void tick(ServerData& serverData);
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
+void build_packet_gold(GameData& gameData);
+
 
 int main()
 {
@@ -95,7 +101,10 @@ int main()
 						}
 						gameData.currentPlayerIndex++;
 						gameData.players.emplace(newPlayer.index ,std::move(newPlayer));
-
+						if(gameData.players.size() >= 2)
+						{
+							gameData.gameStarted = true;
+						}
 						PlayerInitServerPacket packet;
 						packet.player = newPlayer;
 						enet_peer_send(event.peer, 0, build_packet(packet, 0));
@@ -125,7 +134,16 @@ int main()
 			}
 			while (enet_host_check_events(serverData.host, &event) > 0);
 		}
-
+		if (gameData.gameStarted)
+		{
+			uint32_t elapsedTime = now - nextTick;
+			if (gameData.goldTimer <= 0)
+			{
+				build_packet_gold(gameData);
+				gameData.goldTimer = TimerGold;
+			}
+			gameData.goldTimer -= elapsedTime;
+		}
 		// On déclenche un tick si suffisamment de temps s'est écoulé
 		if (now >= nextTick)
 		{
@@ -143,7 +161,28 @@ void send_packet(GameData& gameData, ENetPacket* packet)
 	enet_peer_send(gameData.serverPeer, 0, packet);
 }
 
-
+void build_packet_gold(GameData& gameData)
+{
+	GoldServerPacket packet;
+	for(auto& player : gameData.players)
+	{
+		switch(player.second.type)
+		{
+		case PlayerType::Attacker:
+			player.second.golds += AttackerGoldPerSecond;
+			packet.value = player.second.golds;
+			send_packet(gameData, build_packet(packet, 0));
+			break;
+		case PlayerType::Defender:
+			player.second.golds += DefenderGoldPerSecond;
+			packet.value = player.second.golds;
+			send_packet(gameData, build_packet(packet, 0));
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData)
 {
@@ -172,5 +211,4 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 
 void tick(ServerData& serverData)
 {
-	
 }

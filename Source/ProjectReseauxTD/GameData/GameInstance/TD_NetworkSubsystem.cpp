@@ -225,5 +225,10 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 		{
 			FEnemyPositionServerPacket packet = FEnemyPositionServerPacket::Unserialize(messageArray, offset);
 		}
+		case EOpcode::S_Gold:
+		{
+			FGoldServerPacket packet = FGoldServerPacket::Unserialize(messageArray, offset);
+			OnGoldChangeEvent.Broadcast(packet.value);
+		}
 	}
 }

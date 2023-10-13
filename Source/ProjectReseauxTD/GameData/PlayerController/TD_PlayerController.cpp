@@ -16,7 +16,10 @@ void ATD_PlayerController::BeginPlay()
 	if(auto NetworkSS = GetWorld()->GetGameInstance()->GetSubsystem<UTD_NetworkSubsystem>())
 	{
 		NetworkSS->OnPlayerInitEvent.AddDynamic(this, &ATD_PlayerController::SpawnRightPawn);
+		NetworkSS->OnGoldChangeEvent.AddDynamic(this, &ATD_PlayerController::UpdateGold);
 	}
+	GoldWidget = CreateWidget<UGoldWidget>(this, GoldWidgetClass);
+	GoldWidget->AddToViewport();
 }
 
 void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
@@ -36,4 +39,11 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 		//Spawn pawn Spectator
 		break;
 	}
+}
+
+void ATD_PlayerController::UpdateGold(int32 value)
+{
+	int32 diff = value - CurrentGold;
+	CurrentGold = value;
+	GoldWidget->UpdateGold(value, diff);
 }

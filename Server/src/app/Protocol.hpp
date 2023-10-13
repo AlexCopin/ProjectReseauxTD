@@ -113,6 +113,13 @@ struct TowerSpawnServerPacket
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
 
+struct GoldServerPacket
+{
+	std::uint32_t value;
+
+	static constexpr Opcode opcode = Opcode::S_Gold;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
+};
 
 // Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)
