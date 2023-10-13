@@ -6,7 +6,7 @@
 
 
 //Gold
-constexpr std::int32_t TimerGold = 500;
+constexpr std::int32_t TimerGold = 1000;
 //Attacker
 constexpr std::uint32_t AttackerStartingGold = 100;
 constexpr std::uint32_t AttackerGoldPerSecond = 20;

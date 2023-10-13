@@ -16,7 +16,6 @@ struct ServerData
 
 struct GameData
 {
-	std::uint32_t currentPlayerIndex = 0;
 	std::uint32_t currentEnemyIndex = 0;
 	std::map<std::uint32_t, Player> players;
 	std::map<std::uint32_t, Enemy> enemies;
@@ -25,12 +24,38 @@ struct GameData
 	float goldTimer = TimerGold;
 
 	bool gameStarted = false;
+public:
+	bool CanGameStart() 
+	{
+		if (AttackerConnected() && DefenderConnected())
+			return true;
+		else
+			return false;
+	}
+	bool AttackerConnected()
+	{
+		for (auto& player : players)
+		{
+			if (player.second.type == PlayerType::Attacker)
+				return true;
+		}
+		return false;
+	}
+	bool DefenderConnected()
+	{
+		for (auto& player : players)
+		{
+			if (player.second.type == PlayerType::Defender)
+				return true;
+		}
+		return false;
+	}
 };
 
-void tick(ServerData& serverData);
+void tick(ServerData& serverData, GameData& gameData);
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
 void build_packet_gold(GameData& gameData);
-
+void send_packet(const Player& player, ENetPacket* packet);
 
 int main()
 {
@@ -80,44 +105,60 @@ int main()
 				{
 					// Un nouveau joueur s'est connecté
 					case ENetEventType::ENET_EVENT_TYPE_CONNECT:
+					{
 						//Send info 
 						Player newPlayer;
-						newPlayer.index = gameData.currentPlayerIndex;
+						std::uint32_t ind = enet_peer_get_id(event.peer);
+						newPlayer.index = ind;
 						newPlayer.peer = event.peer;
 
-						switch(gameData.currentPlayerIndex)
+						if (!gameData.AttackerConnected())
 						{
-						case 0:
+							GoldServerPacket packet;
 							newPlayer.type = PlayerType::Attacker;
-							break;
-						case 1:
-							newPlayer.type = PlayerType::Defender;
-							break;
-						default:
-							newPlayer.type = PlayerType::Spectator;
-							break;
+							newPlayer.golds = AttackerStartingGold;
+							packet.value = AttackerStartingGold;
+							send_packet(newPlayer, build_packet(packet, 0));
+
+							std::cout << "Attacker connect" << std::endl;
+
 						}
-						gameData.currentPlayerIndex++;
-						gameData.players.emplace(newPlayer.index ,std::move(newPlayer));
-						if(gameData.players.size() >= 2)
+						else if (gameData.AttackerConnected() && !gameData.DefenderConnected())
 						{
+							GoldServerPacket packet;
+							newPlayer.type = PlayerType::Defender;
+							newPlayer.golds = DefenderStartingGold;
+							packet.value = DefenderStartingGold;
+							send_packet(newPlayer, build_packet(packet, 0));
+
+							std::cout << "Defender connect" << std::endl;
 							gameData.gameStarted = true;
 						}
+						else if(gameData.CanGameStart())
+						{
+							std::cout << "Spectator connect" << std::endl;
+							newPlayer.type = PlayerType::Spectator;
+						}
+
+						gameData.players.emplace(ind, std::move(newPlayer));
 						PlayerInitServerPacket packet;
 						packet.player = newPlayer;
 						enet_peer_send(event.peer, 0, build_packet(packet, 0));
-
 						std::cout << "Peer #" << enet_peer_get_id(event.peer) << " connected!" << std::endl;
 						break;
+					}
 
 					// Un joueur s'est déconnecté
 					case ENetEventType::ENET_EVENT_TYPE_DISCONNECT:
-						std::cout << "Peer #" << enet_peer_get_id(event.peer) << " disconnected!" << std::endl;
-						break;
+					{
+						auto player = gameData.players.find(enet_peer_get_id(event.peer));
+						std::cout << "Peer #" << player->second.index << " disconnected!" << std::endl;
 
+						break;
+					}
 					// On a reçu des données d'un joueur
 					case ENetEventType::ENET_EVENT_TYPE_RECEIVE:
-
+					{
 						// On a reçu un message ! Traitons-le
 						std::vector<std::uint8_t> content(event.packet->dataLength); //< On copie son contenu dans un std::vector pour plus de facilité de gestion
 						std::memcpy(content.data(), event.packet->data, event.packet->dataLength);
@@ -128,24 +169,15 @@ int main()
 						// On n'oublie pas de libérer le packet
 						enet_packet_destroy(event.packet);
 						break;
+					}
 				}
 			}
 			while (enet_host_check_events(serverData.host, &event) > 0);
 		}
-		if (gameData.gameStarted)
-		{
-			uint32_t elapsedTime = now - nextTick;
-			if (gameData.goldTimer <= 0)
-			{
-				build_packet_gold(gameData);
-				gameData.goldTimer = TimerGold;
-			}
-			gameData.goldTimer -= elapsedTime;
-		}
 		// On déclenche un tick si suffisamment de temps s'est écoulé
 		if (now >= nextTick)
 		{
-			tick(serverData);
+			tick(serverData, gameData);
 			nextTick += TickDelay;
 		}
 	}
@@ -228,6 +260,15 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 	}
 }
 
-void tick(ServerData& serverData)
+void tick(ServerData& serverData, GameData& gameData)
 {
+	if (gameData.gameStarted)
+	{
+		if (gameData.goldTimer <= 0)
+		{
+			build_packet_gold(gameData);
+			gameData.goldTimer = TimerGold;
+		}
+		gameData.goldTimer -= TickDelay;
+	}
 }
