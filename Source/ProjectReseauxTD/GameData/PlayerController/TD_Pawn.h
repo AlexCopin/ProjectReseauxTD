@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ProjectReseauxTD/GameData/PlayerController/TD_Pawn.h"
+#include "GameFramework/Pawn.h"
+#include "ProjectReseauxTD/Widgets/TD_WPlayerWidget.h"
 #include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 
-#include "TD_PawnTower.generated.h"
+#include "TD_Pawn.generated.h"
 
 UCLASS()
-class PROJECTRESEAUXTD_API ATD_PawnTower : public ATD_Pawn
+class PROJECTRESEAUXTD_API ATD_Pawn : public APawn
 {
 	GENERATED_BODY()
 protected:
@@ -18,7 +19,7 @@ protected:
 
 public:
 	// Sets default values for this pawn's properties
-	ATD_PawnTower();
+	ATD_Pawn();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -26,8 +27,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FSpawnableData CurrentTowerData;
-
-private:
-	bool holdingTower = false;
+	TSubclassOf<UTD_WPlayerWidget> PawnWidgetClass;
 };

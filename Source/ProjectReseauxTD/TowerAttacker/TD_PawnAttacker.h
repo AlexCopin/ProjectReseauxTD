@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "ProjectReseauxTD/GameData/PlayerController/TD_Pawn.h"
+
 #include "TD_PawnAttacker.generated.h"
 
+class UTD_WPlayerWidget;
+
 UCLASS()
-class PROJECTRESEAUXTD_API ATD_PawnAttacker : public APawn
+class PROJECTRESEAUXTD_API ATD_PawnAttacker : public ATD_Pawn
 {
 	GENERATED_BODY()
 

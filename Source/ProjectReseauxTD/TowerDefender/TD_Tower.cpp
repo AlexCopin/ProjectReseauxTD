@@ -21,7 +21,7 @@ void ATD_Tower::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DrawDebugSphere(GetWorld(), Root->GetComponentLocation(), Range, 20, FColor(255, 50, 255, 255), true);
+	//DrawDebugSphere(GetWorld(), Root->GetComponentLocation(), Range, 20, FColor(255, 50, 255, 255), true);
 }
 
 // Called every frame

@@ -6,6 +6,7 @@
 #include "ProjectReseauxTD/TowerAttacker/TD_PawnAttacker.h"
 #include "ProjectReseauxTD/TowerDefender/TD_PawnTower.h"
 #include "ProjectReseauxTD/Gold/TD_GoldWidget.h"
+#include "ProjectReseauxTD/Widgets/TD_WPlayerWidget.h"
 
 ATD_PlayerController::ATD_PlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -59,6 +60,17 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 		//Spawn pawn Spectator
 		break;
 	}
+	if(auto pawn = Cast<ATD_Pawn>(GetPawn()))
+	{
+		PlayerWidget = CreateWidget<UTD_WPlayerWidget>(this, pawn->PawnWidgetClass);
+		PlayerWidget->AddToViewport();
+	}
+}
+
+void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData)
+{
+	if(PlayerWidget)
+		PlayerWidget->AddSpawnableData(spawnableData);
 }
 
 void ATD_PlayerController::UpdateGold(int32 value)

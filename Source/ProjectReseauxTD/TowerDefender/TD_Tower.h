@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
+#include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 #include "TD_Tower.generated.h"
 
 UCLASS()
@@ -17,7 +18,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UArrowComponent> TopPoint;
 
-	int32 Range = 500;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FSpawnableData TowerData;
 
 	// Sets default values for this actor's properties
 	ATD_Tower();

@@ -10,6 +10,7 @@
 class UTD_GoldWidget;
 class ATD_PawnAttacker;
 class ATD_PawnTower;
+class UTD_WPlayerWidget;
 /**
  * 
  */
@@ -40,6 +41,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PC | Pawns")
 	TSubclassOf<ATD_PawnTower> PawnTowerClass;
 
+	UFUNCTION()
+	void ReceiveTowerData(const FSpawnableData& spawnableData);
 
 	//Gold
 	UPROPERTY()
@@ -50,5 +53,7 @@ public:
 	TSubclassOf<UTD_GoldWidget> GoldWidgetClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UTD_GoldWidget> GoldWidget;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TObjectPtr<UTD_WPlayerWidget> PlayerWidget;
 
 };

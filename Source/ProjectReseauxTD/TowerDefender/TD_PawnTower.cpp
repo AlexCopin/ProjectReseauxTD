@@ -15,6 +15,7 @@ ATD_PawnTower::ATD_PawnTower()
 void ATD_PawnTower::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -22,7 +23,14 @@ void ATD_PawnTower::BeginPlay()
 void ATD_PawnTower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if(holdingTower)
+	{
+		FVector position;
+		FVector direction;
+		GetLocalViewingPlayerController()->DeprojectMousePositionToWorld(position, direction);
+		DrawDebugCircle(GetWorld(), position, CurrentTowerData.Radius, 50, FColor::Red, false, 0.1f);
+		DrawDebugCircle(GetWorld(), position, CurrentTowerData.Radius + CurrentTowerData.Range, 50, FColor::Orange, false, 0.1f);
+	}
 }
 
 // Called to bind functionality to input

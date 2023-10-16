@@ -151,7 +151,7 @@ float Unserialize_f32(const TArray<uint8>& byteArray, int32& offset)
 
 	offset += sizeof(value);
 
-	return NETWORK_ORDERF(value);;
+	return NETWORK_ORDERF(value);
 }
 
 int8 Unserialize_i8(const TArray<uint8>& byteArray, int32& offset)
@@ -285,5 +285,15 @@ FGoldServerPacket FGoldServerPacket::Unserialize(const TArray<uint8>& byteArray,
 {
 	FGoldServerPacket packet;
 	packet.value = Unserialize_u32(byteArray, offset);
+	return packet;
+}
+
+FTowerDataServerPacket FTowerDataServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FTowerDataServerPacket packet;
+	packet.towerData.Name = Unserialize_str(byteArray, offset);
+	packet.towerData.Radius = Unserialize_u32(byteArray, offset);
+	packet.towerData.Range = Unserialize_u32(byteArray, offset);
+	packet.towerData.Cost = Unserialize_u32(byteArray, offset);
 	return packet;
 }

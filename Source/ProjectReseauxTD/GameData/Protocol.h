@@ -5,6 +5,7 @@
 #include <string>
 #include "Math/Vector.h"
 #include <enet6/enet.h>
+#include "SpawnableStruct.h"
 #include "Protocol.generated.h"
 
 
@@ -21,7 +22,8 @@ enum class EOpcode : uint8
 	S_EnemySpawn,
 	S_EnemyPos,
 	S_TowerSpawn,
-	S_Gold
+	S_Gold,
+	S_TowerData
 };
 
 UENUM(BlueprintType)
@@ -232,6 +234,19 @@ public:
 	static constexpr EOpcode opcode = EOpcode::S_EnemyPos;
 	static FEnemyPositionServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
+
+USTRUCT(BlueprintType)
+struct FTowerDataServerPacket
+{
+	GENERATED_BODY()
+public:
+	FSpawnableData towerData;
+
+	static constexpr EOpcode opcode = EOpcode::S_TowerData;
+	static FTowerDataServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+
+};
+
 
 // Petite fonction d'aide pour construire un packet ENet � partir d'une de nos structures de packet, ins�re automatiquement l'opcode au d�but des donn�es
 template<typename T> ENetPacket* build_packet(const T& packet, enet_uint32 flags)
