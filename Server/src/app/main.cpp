@@ -336,8 +336,10 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 		{
 			EnemyPosClientPacket enemyPosPacket = EnemyPosClientPacket::Unserialize(message, offset);
 
-			if (gameData.enemies.size() != 0)
-				gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
+			if (gameData.enemies.size() <= 0)
+				break;
+
+			gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
 
 			check_enemy_position(gameData, enemyPosPacket.enemyIndex);
 			break;
