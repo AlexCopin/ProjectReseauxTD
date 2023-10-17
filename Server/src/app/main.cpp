@@ -60,7 +60,7 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 void build_packet_gold(GameData& gameData);
 void build_packet_spawnableData(GameData& gameData, const Player& player);
 void send_packet(const Player& player, ENetPacket* packet);
-void check_enemies_position(GameData& gameData);
+void check_enemy_position(GameData& gameData, uint32_t enemyIndex);
 
 int main()
 {
@@ -197,15 +197,22 @@ void send_packet(const Player& player, ENetPacket* packet)
 	enet_peer_send(player.peer, 0, packet);
 }
 
-void check_enemies_position(GameData& gameData)
+void check_enemy_position(GameData& gameData, uint32_t enemyIndex)
 {
-	for (const auto& enemy : gameData.enemies)
+	if (gameData.enemies.size() <= 0)
+		return;
+
+	auto& enemy = gameData.enemies[enemyIndex];
+
+	if (Vector3::Distance(enemy.actualPosition, enemy.nextPoint) <= 0.3f)
 	{
-		if (Vector3::Distance(enemy.second.actualPosition, enemy.second.nextPoint) <= 0.3f)
-		{
-			//enemy.second.nextPoint++;
-			//Send nextPoint to client
-		}
+		enemy.nextPoint = enemy.pathPoints[++enemy.actualPointIndex];
+		
+		EnemyPositionServerPacket enemyPositionPacket;
+		enemyPositionPacket.nextPos = enemy.nextPoint;
+		enemyPositionPacket.enemyIndex = enemyIndex;
+
+		send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
 	}
 }
 
@@ -258,6 +265,18 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			EnemySpawnClientPacket enemyPacket = EnemySpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "enemyPacket received" << std::endl;
+			EnemySpawnServerPacket enemySpawnServerPacket;
+			enemySpawnServerPacket.enemyType = 2;
+			enemySpawnServerPacket.line = 0;
+			enemySpawnServerPacket.index = gameData.currentEnemyIndex;
+
+			Enemy newEnemy;
+			newEnemy.index = gameData.currentEnemyIndex;
+			newEnemy.actualPointIndex = 0;
+			gameData.enemies.emplace(gameData.currentEnemyIndex++, newEnemy);
+
+			send_packet(gameData.players.begin()->second, build_packet(enemySpawnServerPacket, 0));
+
 			break;
 		}
 		case Opcode::C_TowerSpawn:
@@ -318,30 +337,31 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 		{
 			EnemyPathClientPacket enemyPathPacket = EnemyPathClientPacket::Unserialize(message, offset);
 
-			for (auto i = 0; i < enemyPathPacket.pathPoints.size(); i++)
-			{
-				std::cout << "enemyPathPacket received : " << enemyPathPacket.pathPoints[i] << std::endl;
-			}
+			if (gameData.enemies.size() <= 0)
+				break;
 
-			if (gameData.enemies.size() != 0)
-			{
-				gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
+			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.pathPoints = enemyPathPacket.pathPoints;
+			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
+			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.index = enemyPathPacket.enemyIndex;
 
-				EnemyPositionServerPacket enemyPositionPacket;
-				enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
+			EnemyPositionServerPacket enemyPositionPacket;
+			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
+			enemyPositionPacket.enemyIndex = enemyPathPacket.enemyIndex;
 
-				send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
-			}
+			send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
+			
 			break;
 		}
 		case Opcode::C_EnemyPos:
 		{
 			EnemyPosClientPacket enemyPosPacket = EnemyPosClientPacket::Unserialize(message, offset);
 
-			if (gameData.enemies.size() != 0)
-				gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
+			if (gameData.enemies.size() <= 0)
+				break;
 
-			check_enemies_position(gameData);
+			gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
+
+			check_enemy_position(gameData, enemyPosPacket.enemyIndex);
 			break;
 		}
 	}

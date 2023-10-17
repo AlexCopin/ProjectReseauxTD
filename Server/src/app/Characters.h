@@ -51,6 +51,7 @@ struct Enemy
 {
 	std::uint32_t index;
 	std::vector<Vector3> pathPoints;
+	std::uint8_t actualPointIndex;
 	Vector3 nextPoint;
 	Vector3 actualPosition;
 };

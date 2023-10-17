@@ -2,7 +2,7 @@
 
 
 #include "TD_Enemy.h"
-
+#include "ProjectReseauxTD/GameData/GameInstance/TD_NetworkSubsystem.h"	
 
 // Sets default values
 ATD_Enemy::ATD_Enemy(const FObjectInitializer& OI) : Super(OI)
@@ -21,6 +21,11 @@ void ATD_Enemy::Initialize(TObjectPtr<ATargetPoint> targetPoint)
 void ATD_Enemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (auto NetworkSS = GetWorld()->GetGameInstance()->GetSubsystem<UTD_NetworkSubsystem>())
+	{
+		NetworkSS->OnEnemyPositionEvent.AddDynamic(this, &ATD_Enemy::MoveTo);
+	}
 }
 
 // Called every frame
