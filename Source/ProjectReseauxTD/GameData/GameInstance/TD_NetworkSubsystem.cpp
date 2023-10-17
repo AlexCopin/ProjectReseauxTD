@@ -236,7 +236,13 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 		case EOpcode::S_TowerData:
 		{
 			FTowerDataServerPacket packet = FTowerDataServerPacket::Unserialize(messageArray, offset);
-			GetWorld()->GetFirstPlayerController<ATD_PlayerController>()->ReceiveTowerData(packet.towerData);
+			FString debugString = FString::Printf(TEXT("Name tower = : %s - Radius tower : %f"), *packet.towerData.Name, (float)packet.towerData.Radius);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, *debugString);
+			auto PC = GetWorld()->GetFirstPlayerController<ATD_PlayerController>();
+			if (PC->PlayerWidget)
+				PC->ReceiveTowerData(packet.towerData, true);
+			else
+				PC->ReceiveTowerData(packet.towerData, false);
 			break;
 		}
 	}

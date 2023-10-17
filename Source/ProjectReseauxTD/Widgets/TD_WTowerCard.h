@@ -8,6 +8,7 @@
 
 #include "TD_WTowerCard.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTowerCardSelected, const FSpawnableData&, data);
 
 UCLASS()
 class UTD_WTowerCard : public UUserWidget
@@ -27,4 +28,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta= (BindWidget))
 	TObjectPtr<UButton> Button;
+
+	UFUNCTION()
+	void SelectThisCard();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTowerCardSelected OnTowerCardSelectedEvent;
 };

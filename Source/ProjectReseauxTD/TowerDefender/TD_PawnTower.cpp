@@ -40,3 +40,9 @@ void ATD_PawnTower::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
+void ATD_PawnTower::SelectTower(const FSpawnableData& data)
+{
+	CurrentTowerData = data;
+	holdingTower = true;
+}
+

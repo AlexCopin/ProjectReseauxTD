@@ -2,6 +2,7 @@
 
 
 #include "TD_Pawn.h"
+#include "ProjectReseauxTD/Widgets/TD_WPlayerWidget.h"
 
 // Sets default values
 ATD_Pawn::ATD_Pawn()

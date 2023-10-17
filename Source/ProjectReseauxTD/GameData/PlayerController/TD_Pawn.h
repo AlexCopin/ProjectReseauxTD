@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "ProjectReseauxTD/Widgets/TD_WPlayerWidget.h"
 #include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 
 #include "TD_Pawn.generated.h"
+
+class UTD_WPlayerWidget;
 
 UCLASS()
 class PROJECTRESEAUXTD_API ATD_Pawn : public APawn
