@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSpawnableData CurrentTowerData;
 
+	UFUNCTION(BlueprintCallable)
+	void SelectTower(const FSpawnableData& data);
+
 private:
 	bool holdingTower = false;
 };

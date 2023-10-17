@@ -5,6 +5,7 @@
 #include "Components/HorizontalBox.h"
 #include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 #include "ProjectReseauxTD/Widgets/TD_WTowerCard.h"
+#include "ProjectReseauxTD/GameData/PlayerController/TD_Pawn.h"
 
 
 #include "TD_WPlayerWidget.generated.h"
@@ -20,7 +21,7 @@ public:
 	void NativeConstruct() override;
 
 	UFUNCTION()
-	void AddSpawnableData(const FSpawnableData& spawnableData);
+	void AddSpawnableData(const FSpawnableData& spawnableData, ATD_Pawn* pawn);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> CardsBox;

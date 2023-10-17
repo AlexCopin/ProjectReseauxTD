@@ -44,7 +44,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FSpawnableData> SpawnableDatas;
 	UFUNCTION()
-	void ReceiveTowerData(const FSpawnableData& spawnableData);
+	void ReceiveTowerData(const FSpawnableData& spawnableData, bool inWidget);
 
 	//Gold
 	UPROPERTY()

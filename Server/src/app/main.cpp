@@ -57,7 +57,7 @@ public:
 void tick(ServerData& serverData, GameData& gameData);
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
 void build_packet_gold(GameData& gameData);
-void build_packet_spawnableData(GameData& gameData);
+void build_packet_spawnableData(GameData& gameData, const Player& player);
 void send_packet(const Player& player, ENetPacket* packet);
 
 int main()
@@ -133,7 +133,7 @@ int main()
 							gameData.goldDefender = DefenderStartingGold;
 							packet.value = DefenderStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
-							build_packet_spawnableData(gameData);
+							build_packet_spawnableData(gameData, newPlayer);
 
 							std::cout << "Defender connect" << std::endl;
 							gameData.gameStarted = true;
@@ -218,7 +218,7 @@ void build_packet_gold(GameData& gameData)
 	}
 }
 
-void build_packet_spawnableData(GameData& gameData)
+void build_packet_spawnableData(GameData& gameData, const Player& player)
 {
 	TowerDataServerPacket packet01;
 	TowerSimple simpleTower;
@@ -228,6 +228,7 @@ void build_packet_spawnableData(GameData& gameData)
 	packet01.towerData.range = simpleTower.range;
 	packet01.towerData.cost = simpleTower.cost;
 	packet01.towerData.fireRate = simpleTower.fireRate;
+	send_packet(player, build_packet(packet01, 0));
 	std::cout << packet01.towerData.name << std::endl;
 	TowerDataServerPacket packet02;
 	TowerFrost towerFrost;
@@ -238,6 +239,7 @@ void build_packet_spawnableData(GameData& gameData)
 	packet02.towerData.cost = towerFrost.cost;
 	packet02.towerData.fireRate = towerFrost.fireRate;
 	std::cout << packet02.towerData.name << std::endl;
+	send_packet(player, build_packet(packet02, 0));
 	TowerDataServerPacket packet03;
 	TowerFast towerFast;
 	packet03.towerData.typeTower = towerFast.typeTower;
@@ -247,23 +249,7 @@ void build_packet_spawnableData(GameData& gameData)
 	packet03.towerData.cost = towerFast.cost;
 	packet03.towerData.fireRate = towerFast.fireRate;
 	std::cout << packet03.towerData.name << std::endl;
-
-	for (auto& player : gameData.players)
-	{
-		switch (player.second.type)
-		{
-		case PlayerType::Attacker:
-			//Do enemies
-			break;
-		case PlayerType::Defender:
-			send_packet(player.second, build_packet(packet01, 0));
-			send_packet(player.second, build_packet(packet02, 0));
-			send_packet(player.second, build_packet(packet03, 0));
-			break;
-		default:
-			break;
-		}
-	}
+	send_packet(player, build_packet(packet03, 0));
 }
 
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData)

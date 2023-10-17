@@ -34,44 +34,59 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 {
 	switch (playerType)
 	{
-	case EPlayerType::Attacker:
-	{
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Attacker spawn pawn"));
-		ATD_PawnAttacker* pawn = GetWorld()->SpawnActor<ATD_PawnAttacker>(PawnAttackerClass);
-		pawn->SetOwner(this);
-		UnPossess();
-		SetPawn(pawn);
-		Possess(pawn);
-		break;
-	}
-	case EPlayerType::Defender:
-	{
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Defender spawn pawn"));
-		ATD_PawnTower* pawn = GetWorld()->SpawnActor<ATD_PawnTower>(PawnTowerClass);
-		pawn->SetOwner(this);
-		UnPossess();
-		SetPawn(pawn);
-		Possess(pawn);
-		//Spawn pawn Defender
-		break;
-	}
-	case EPlayerType::Spectator:
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Spectator spawn pawn"));
-		//Spawn pawn Spectator
-		break;
-	}
-	if(auto pawn = Cast<ATD_Pawn>(GetPawn()))
-	{
-		PlayerWidget = CreateWidget<UTD_WPlayerWidget>(this, pawn->PawnWidgetClass);
-		PlayerWidget->AddToViewport();
-		for(const auto& data : SpawnableDatas)
-			PlayerWidget->AddSpawnableData(data);
+		case EPlayerType::Attacker:
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Attacker spawn pawn"));
+			ATD_PawnAttacker* pawn = GetWorld()->SpawnActor<ATD_PawnAttacker>(PawnAttackerClass);
+			pawn->SetOwner(this);
+			UnPossess();
+			SetPawn(pawn);
+			Possess(pawn);
+			PlayerWidget = CreateWidget<UTD_WPlayerWidget>(this, pawn->PawnWidgetClass);
+			PlayerWidget->AddToViewport();
+			if (!SpawnableDatas.IsEmpty())
+			{
+				for (const auto& data : SpawnableDatas)
+				{
+					ReceiveTowerData(data, true);
+				}
+			}
+			break;
+		}
+		case EPlayerType::Defender:
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Defender spawn pawn"));
+			ATD_PawnTower* pawn = GetWorld()->SpawnActor<ATD_PawnTower>(PawnTowerClass);
+			pawn->SetOwner(this);
+			UnPossess();
+			SetPawn(pawn);
+			Possess(pawn);
+			PlayerWidget = CreateWidget<UTD_WPlayerWidget>(this, pawn->PawnWidgetClass);
+			PlayerWidget->AddToViewport();
+			if (!SpawnableDatas.IsEmpty())
+			{
+				for (const auto& data : SpawnableDatas)
+				{
+					ReceiveTowerData(data, true);
+				}
+			}
+			break;
+		}
+		case EPlayerType::Spectator:
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Spectator spawn pawn"));
+			//Spawn pawn Spectator
+			break;
+		}
 	}
 }
 
-void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData)
+void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData, bool inWidget)
 {
-	SpawnableDatas.Add(spawnableData);
+	if(PlayerWidget && inWidget)
+		PlayerWidget->AddSpawnableData(spawnableData, GetPawn<ATD_Pawn>());
+	else
+		SpawnableDatas.Add(spawnableData);
 }
 
 void ATD_PlayerController::UpdateGold(int32 value)
