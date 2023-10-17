@@ -17,6 +17,7 @@ struct ServerData
 struct GameData
 {
 	std::uint32_t currentEnemyIndex = 0;
+	std::uint32_t currentTowerIndex = 0;
 	std::uint32_t goldAttacker = 0;
 	std::uint32_t goldDefender = 0;
 	std::map<std::uint32_t, Player> players;
@@ -234,34 +235,13 @@ void build_packet_gold(GameData& gameData)
 void build_packet_spawnableData(GameData& gameData, const Player& player)
 {
 	TowerDataServerPacket packet01;
-	TowerSimple simpleTower;
-	packet01.towerData.typeTower = simpleTower.typeTower;
-	packet01.towerData.name = simpleTower.name;
-	packet01.towerData.radius = simpleTower.radius;
-	packet01.towerData.range = simpleTower.range;
-	packet01.towerData.cost = simpleTower.cost;
-	packet01.towerData.fireRate = simpleTower.fireRate;
+	packet01.towerData = TowerSimpleToTower();
 	send_packet(player, build_packet(packet01, 0));
-	std::cout << packet01.towerData.name << std::endl;
 	TowerDataServerPacket packet02;
-	TowerFrost towerFrost;
-	packet02.towerData.typeTower = towerFrost.typeTower;
-	packet02.towerData.name = towerFrost.name;
-	packet02.towerData.radius = towerFrost.radius;
-	packet02.towerData.range = towerFrost.range;
-	packet02.towerData.cost = towerFrost.cost;
-	packet02.towerData.fireRate = towerFrost.fireRate;
-	std::cout << packet02.towerData.name << std::endl;
+	packet02.towerData = TowerSlowToTower();
 	send_packet(player, build_packet(packet02, 0));
 	TowerDataServerPacket packet03;
-	TowerFast towerFast;
-	packet03.towerData.typeTower = towerFast.typeTower;
-	packet03.towerData.name = towerFast.name;
-	packet03.towerData.radius = towerFast.radius;
-	packet03.towerData.range = towerFast.range;
-	packet03.towerData.cost = towerFast.cost;
-	packet03.towerData.fireRate = towerFast.fireRate;
-	std::cout << packet03.towerData.name << std::endl;
+	packet03.towerData = TowerFastToTower();
 	send_packet(player, build_packet(packet03, 0));
 }
 
@@ -285,6 +265,46 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			TowerSpawnClientPacket towerPacket = TowerSpawnClientPacket::Unserialize(message, offset);
 
 			std::cout << "towerSpawnPacket received" << std::endl;
+			//if(Bla bla bla test Radius avec autres tourelles) pas le temps
+			//Oh c'est bon on peut y aller!! on envoie packet retour
+			TowerSpawnServerPacket serverTowerPacket;
+			serverTowerPacket.towerType = (std::uint8_t)towerPacket.towerType;
+			serverTowerPacket.index = gameData.currentTowerIndex;
+			serverTowerPacket.position = towerPacket.position;
+      
+			//Add Pos in Tower later
+      Tower towerData;
+			switch(towerPacket.towerType)
+			{
+			case TowerType::Normal:
+        towerData = TowerSimpleToTower();
+				break;
+			case TowerType::Fast:
+        towerData = TowerFastToTower();
+				break;
+			case TowerType::Slow:
+        towerData = TowerSlowToTower();
+				break;
+			}
+      if (gameData.goldDefender < towerData.cost)
+        return;
+      gameData.towers.emplace(gameData.currentTowerIndex, towerData);
+
+      GoldServerPacket goldPacket;
+      gameData.goldDefender -= towerData.cost;
+      goldPacket.value = gameData.goldDefender;
+
+			for(const auto& player : gameData.players)
+			{
+        std::cout << "Send ServerTowerPacket" << std::endl;
+        if(player.second.type == PlayerType::Defender)
+        {
+				  send_packet(player.second, build_packet(goldPacket, 0));
+        }
+
+				send_packet(player.second, build_packet(serverTowerPacket, 0));
+			}
+			gameData.currentTowerIndex++;
 			break;
 		}
 		case Opcode::C_CastlePosition:
@@ -304,12 +324,14 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			}
 
 			if (gameData.enemies.size() != 0)
+			{
 				gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
 
-			EnemyPositionServerPacket enemyPositionPacket;
-			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
+				EnemyPositionServerPacket enemyPositionPacket;
+				enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
 
-			send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
+				send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
+			}
 			break;
 		}
 		case Opcode::C_EnemyPos:

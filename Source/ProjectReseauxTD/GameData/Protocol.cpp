@@ -235,11 +235,18 @@ void FEnemyPosClientPacket::Serialize(TArray<uint8>& byteArray) const
 void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
 	Serialize_u8(byteArray, (uint8)towerType);
-	Serialize_f32(byteArray, posX);
-	Serialize_f32(byteArray, posY);
-	Serialize_f32(byteArray, posZ);
-	Serialize_u32(byteArray, radius);
+	Serialize_v3(byteArray, position);
 }
+
+FTowerSpawnServerPacket FTowerSpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FTowerSpawnServerPacket packet;
+	packet.towerType = Unserialize_u8(byteArray, offset);
+	packet.index = Unserialize_u32(byteArray, offset);
+	packet.position = Unserialize_v3(byteArray, offset);
+	return packet;
+}
+
 
 
 FEnemySpawnServerPacket FEnemySpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
@@ -260,19 +267,6 @@ FEnemyPositionServerPacket FEnemyPositionServerPacket::Unserialize(const TArray<
 
 	return packet;
 }
-
-FTowerSpawnServerPacket FTowerSpawnServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
-{
-	FTowerSpawnServerPacket packet;
-	packet.towerType = Unserialize_u8(byteArray, offset);
-	packet.posX = Unserialize_f32(byteArray, offset);
-	packet.posY = Unserialize_f32(byteArray, offset);
-	packet.posZ = Unserialize_f32(byteArray, offset);
-	packet.range = Unserialize_u32(byteArray, offset);
-	packet.radius = Unserialize_u32(byteArray, offset);
-	return packet;
-}
-
 void FCastlePositionClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
 	Serialize_f32(byteArray, posX);

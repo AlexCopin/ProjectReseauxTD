@@ -133,26 +133,6 @@ public:
 	static FEnemySpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
-USTRUCT(BlueprintType)
-struct FTowerSpawnClientPacket
-{
-	GENERATED_BODY()
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ETowerType towerType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posX;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posY;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posZ;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 radius;
-
-	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
-	void Serialize(TArray<uint8>& byteArray) const;
-};
 
 USTRUCT(BlueprintType)
 struct FCastlePositionClientPacket
@@ -171,6 +151,20 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FTowerSpawnClientPacket
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETowerType towerType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector position;
+
+	static constexpr EOpcode opcode = EOpcode::C_TowerSpawn;
+	void Serialize(TArray<uint8>& byteArray) const;
+};
+USTRUCT(BlueprintType)
 struct FTowerSpawnServerPacket
 {
 	GENERATED_BODY()
@@ -179,15 +173,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 towerType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posX;
+	int32 index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posY;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float posZ;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 range;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 radius;
+	FVector position;
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerSpawn;
 	static FTowerSpawnServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);

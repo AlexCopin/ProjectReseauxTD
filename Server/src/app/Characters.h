@@ -2,6 +2,7 @@
 
 #include <enet6/enet.h>
 #include "math/vector3.hpp"
+#include <vector>
 
 
 
@@ -68,8 +69,8 @@ struct TowerSimple
 {
 	const TowerType typeTower = TowerType::Normal;
 	const std::string name = "Simple Tower";
-	const std::uint32_t radius = 100;
-	const std::uint32_t range = 300.0f;
+	const std::uint32_t radius = 150;
+	const std::uint32_t range = 600;
 	const std::uint32_t cost = 100;
 	const float fireRate = 0.7f;
 };
@@ -77,8 +78,8 @@ struct TowerFrost
 {
 	const TowerType typeTower = TowerType::Slow;
 	const std::string name = "Frost Tower";
-	const std::uint32_t radius = 150;
-	const std::uint32_t range = 400;
+	const std::uint32_t radius = 250;
+	const std::uint32_t range = 800;
 	const std::uint32_t cost = 150;
 	const float fireRate = 1.2f;
 };
@@ -86,8 +87,13 @@ struct TowerFast
 {
 	const TowerType typeTower = TowerType::Fast;
 	const std::string name = "Fast Tower";
-	const std::uint32_t radius = 100;
-	const std::uint32_t range = 50;
+	const std::uint32_t radius = 200;
+	const std::uint32_t range = 600;
 	const std::uint32_t cost = 150;
 	const float fireRate = 0.4f;
 };
+
+
+Tower TowerFastToTower();
+Tower TowerSlowToTower();
+Tower TowerSimpleToTower();

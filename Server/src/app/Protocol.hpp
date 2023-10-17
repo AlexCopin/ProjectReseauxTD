@@ -79,17 +79,6 @@ struct EnemySpawnServerPacket
 };
 
 
-struct TowerSpawnClientPacket
-{
-	TowerType towerType;
-	float posX;
-	float posY;
-	float posZ;
-	std::uint32_t radius;
-
-	static constexpr Opcode opcode = Opcode::C_TowerSpawn;
-	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
-};
 
 struct CastlePositionClientPacket
 {
@@ -101,14 +90,19 @@ struct CastlePositionClientPacket
 	static CastlePositionClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
+struct TowerSpawnClientPacket
+{
+	TowerType towerType;
+	Vector3 position;
+
+	static constexpr Opcode opcode = Opcode::C_TowerSpawn;
+	static TowerSpawnClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
 struct TowerSpawnServerPacket
 {
 	std::uint8_t towerType;
-	float posX;
-	float posY;
-	float posZ;
-	std::uint32_t range;
-	std::uint32_t radius;
+	std::uint32_t index;
+	Vector3 position;
 
 	static constexpr Opcode opcode = Opcode::S_TowerSpawn;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;

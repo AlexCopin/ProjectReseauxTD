@@ -2,6 +2,7 @@
 
 
 #include "TD_PawnTower.h"
+#include "ProjectReseauxTD/GameData/GameInstance/TD_NetworkSubsystem.h"
 
 // Sets default values
 ATD_PawnTower::ATD_PawnTower()
@@ -25,14 +26,8 @@ void ATD_PawnTower::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if(holdingTower)
 	{
-		FVector position;
-		FVector direction;
-		FHitResult hit;
-		GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(CursorPosition, direction);
-		CursorPositionOnFloor *= FVector::UpVector;
-		FString debugString = FString::Printf(TEXT("Vector mouse pos =  %f - %f - %f"), CursorPositionOnFloor.X, CursorPositionOnFloor.Y, CursorPositionOnFloor.Z);
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 0.5f, FColor::Red, *debugString);
-		//GetWorld()->LineTraceSingleByChannel(hit, position, FVector::DownVector * 100, ECollisionChannel::ECC_EngineTraceChannel3);
+		CursorPositionOnFloor = GetActorLocation();
+		CursorPositionOnFloor.RotateAngleAxis(90, FVector(0, 1, 0));
 		DrawDebugCircle(GetWorld(), CursorPositionOnFloor, CurrentTowerData.Radius, 50, FColor::Red, false, 0.1f);
 		DrawDebugCircle(GetWorld(), CursorPositionOnFloor, CurrentTowerData.Radius + CurrentTowerData.Range, 50, FColor::Orange, false, 0.1f);
 	}
@@ -51,3 +46,14 @@ void ATD_PawnTower::SelectTower(const FSpawnableData& data)
 	holdingTower = true;
 }
 
+
+void ATD_PawnTower::TrySpawnTower()
+{
+	if (auto NetworkSS = GetWorld()->GetGameInstance()->GetSubsystem<UTD_NetworkSubsystem>())
+	{
+		FTowerSpawnClientPacket packet;
+		packet.towerType = (ETowerType)CurrentTowerData.EnumValue;
+		packet.position = GetActorLocation();
+		NetworkSS->SendSpawnTowerClientPacket(packet);
+	}
+}

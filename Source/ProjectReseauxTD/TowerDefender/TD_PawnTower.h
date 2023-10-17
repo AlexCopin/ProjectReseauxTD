@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SelectTower(const FSpawnableData& data);
 
+	UFUNCTION(BlueprintCallable)
+	void TrySpawnTower();
+
 private:
 	bool holdingTower = false;
 };

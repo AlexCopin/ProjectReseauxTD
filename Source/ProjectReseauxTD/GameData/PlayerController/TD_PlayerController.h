@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 
 #include "TD_PlayerController.generated.h"
 
@@ -11,6 +12,7 @@ class UTD_GoldWidget;
 class ATD_PawnAttacker;
 class ATD_PawnTower;
 class UTD_WPlayerWidget;
+class ATD_Tower;
 /**
  * 
  */
@@ -58,4 +60,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UTD_WPlayerWidget> PlayerWidget;
 
+	UFUNCTION()
+	void SpawnTower(FTowerSpawnServerPacket ReceivedPacket);
+	//Array ou map à terme, pour l'instant même modèle donc osef
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ATD_Tower> TowerBaseClass;
+
+	UPROPERTY()
+	TMap<uint8, FSpawnableData> TowersData;
+	UPROPERTY()
+	TMap<int32, TObjectPtr<ATD_Tower>> Towers;
+
+  EPlayerType PlayerType;
 };

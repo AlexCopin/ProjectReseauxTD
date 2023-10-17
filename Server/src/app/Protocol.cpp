@@ -243,21 +243,15 @@ void EnemySpawnServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) con
 void TowerSpawnServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 {
 	Serialize_u8(byteArray, towerType);
-	Serialize_f32(byteArray, posX);
-	Serialize_f32(byteArray, posY);
-	Serialize_f32(byteArray, posZ);
-	Serialize_u32(byteArray, range);
-	Serialize_u32(byteArray, radius);
+	Serialize_u32(byteArray, index);
+	Serialize_v3(byteArray, position);
 }
 
 TowerSpawnClientPacket TowerSpawnClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
 {
 	TowerSpawnClientPacket packet;
 	packet.towerType = static_cast<TowerType>(Unserialize_u8(byteArray, offset));
-	packet.posX = Unserialize_f32(byteArray, offset);
-	packet.posY = Unserialize_f32(byteArray, offset);
-	packet.posZ = Unserialize_f32(byteArray, offset);
-	packet.radius = Unserialize_u32(byteArray, offset);
+	packet.position = Unserialize_v3(byteArray, offset);
 	return packet;
 }
 

@@ -28,12 +28,20 @@ void ATD_Tower::BeginPlay()
 void ATD_Tower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if(TowerData.Range > 0)
+	{
+		DrawDebugCircle(GetWorld(), GetActorLocation(), TowerData.Range + TowerData.Radius, 50, FColor::Cyan, false, 0.1f);
+	}
 }
 
 void ATD_Tower::Shoot(AActor& Enemie)
 {
 
 	
+}
+
+void ATD_Tower::Init(const FSpawnableData& _TowerData)
+{
+	TowerData = _TowerData;
 }
 

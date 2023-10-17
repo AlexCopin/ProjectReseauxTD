@@ -34,4 +34,6 @@ public:
 
 	virtual void Shoot(AActor& Enemie);
 
+	void Init(const FSpawnableData& _TowerData);
+
 };

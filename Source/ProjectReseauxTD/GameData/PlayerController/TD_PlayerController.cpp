@@ -7,6 +7,8 @@
 #include "ProjectReseauxTD/TowerDefender/TD_PawnTower.h"
 #include "ProjectReseauxTD/Gold/TD_GoldWidget.h"
 #include "ProjectReseauxTD/Widgets/TD_WPlayerWidget.h"
+#include "ProjectReseauxTD/TowerDefender/TD_Tower.h"
+#include "ProjectReseauxTD/GameData/Protocol.h"
 
 ATD_PlayerController::ATD_PlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -21,6 +23,7 @@ void ATD_PlayerController::BeginPlay()
 	{
 		NetworkSS->OnPlayerInitEvent.AddDynamic(this, &ATD_PlayerController::SpawnRightPawn);
 		NetworkSS->OnGoldChangeEvent.AddDynamic(this, &ATD_PlayerController::UpdateGold);
+		NetworkSS->OnTowerSpawnEvent.AddDynamic(this, &ATD_PlayerController::SpawnTower);
 	}
 	if(ensure(GoldWidgetClass))
 	{
@@ -32,6 +35,7 @@ void ATD_PlayerController::BeginPlay()
 
 void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 {
+  PlayerType = playerType;
 	switch (playerType)
 	{
 		case EPlayerType::Attacker:
@@ -87,6 +91,8 @@ void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData,
 		PlayerWidget->AddSpawnableData(spawnableData, GetPawn<ATD_Pawn>());
 	else
 		SpawnableDatas.Add(spawnableData);
+  if(PlayerType == EPlayerType::Defender)
+	  TowersData.Emplace(spawnableData.EnumValue, spawnableData);
 }
 
 void ATD_PlayerController::UpdateGold(int32 value)
@@ -94,4 +100,15 @@ void ATD_PlayerController::UpdateGold(int32 value)
 	int32 diff = value - CurrentGold;
 	CurrentGold = value;
 	GoldWidget->UpdateGold(value, diff);
+}
+
+void ATD_PlayerController::SpawnTower(FTowerSpawnServerPacket ReceivedPacket)
+{
+	auto NewTower = GetWorld()->SpawnActor<ATD_Tower>(TowerBaseClass, ReceivedPacket.position, FRotator::ZeroRotator);
+	Towers.Emplace(ReceivedPacket.index, NewTower);
+  if (PlayerType == EPlayerType::Defender)
+  {
+	  FSpawnableData data = *TowersData.Find(ReceivedPacket.towerType);
+	  NewTower->Init(data);
+  }
 }
