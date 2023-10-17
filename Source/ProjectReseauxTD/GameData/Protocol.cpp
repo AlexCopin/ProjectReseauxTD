@@ -229,7 +229,7 @@ void FEnemyPathClientPacket::Serialize(TArray<uint8>& byteArray) const
 void FEnemyPosClientPacket::Serialize(TArray<uint8>& byteArray) const
 {
 	Serialize_v3(byteArray, actualPos);
-	Serialize_i8(byteArray, enemyIndex);
+	Serialize_u8(byteArray, enemyIndex);
 }
 
 void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const

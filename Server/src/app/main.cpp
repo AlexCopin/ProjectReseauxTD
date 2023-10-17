@@ -303,7 +303,8 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 				std::cout << "enemyPathPacket received : " << enemyPathPacket.pathPoints[i] << std::endl;
 			}
 
-			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
+			if (gameData.enemies.size() != 0)
+				gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
 
 			EnemyPositionServerPacket enemyPositionPacket;
 			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
@@ -315,7 +316,8 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 		{
 			EnemyPosClientPacket enemyPosPacket = EnemyPosClientPacket::Unserialize(message, offset);
 
-			gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
+			if (gameData.enemies.size() != 0)
+				gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
 
 			check_enemies_position(gameData);
 			break;
