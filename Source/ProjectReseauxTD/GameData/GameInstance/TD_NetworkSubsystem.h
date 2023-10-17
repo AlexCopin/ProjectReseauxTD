@@ -40,6 +40,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SendEnemyPathClientPacket(const FEnemyPathClientPacket& packet);
+	
+	UFUNCTION(BlueprintCallable)
+	void SendEnemyPosClientPacket(const FEnemyPosClientPacket& packet);
 
 	UFUNCTION(BlueprintCallable)
 	void SendSpawnTowerClientPacket(const FTowerSpawnClientPacket& packet);

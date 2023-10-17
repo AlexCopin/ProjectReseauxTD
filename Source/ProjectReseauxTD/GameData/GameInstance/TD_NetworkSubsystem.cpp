@@ -36,6 +36,11 @@ void UTD_NetworkSubsystem::SendEnemyPathClientPacket(const FEnemyPathClientPacke
 	send_packet(build_packet(packet, 0));
 }
 
+void UTD_NetworkSubsystem::SendEnemyPosClientPacket(const FEnemyPosClientPacket& packet)
+{
+	send_packet(build_packet(packet, 0));
+}
+
 void UTD_NetworkSubsystem::SendSpawnTowerClientPacket(const FTowerSpawnClientPacket& packet)
 {
 	send_packet(build_packet(packet, 0));

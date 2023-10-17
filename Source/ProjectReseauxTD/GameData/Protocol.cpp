@@ -222,6 +222,14 @@ void FEnemyPathClientPacket::Serialize(TArray<uint8>& byteArray) const
 
 	for (const auto& pos : pathPoints)
 		Serialize_v3(byteArray, pos);
+
+	Serialize_u8(byteArray, enemyIndex);
+}
+
+void FEnemyPosClientPacket::Serialize(TArray<uint8>& byteArray) const
+{
+	Serialize_v3(byteArray, actualPos);
+	Serialize_i8(byteArray, enemyIndex);
 }
 
 void FTowerSpawnClientPacket::Serialize(TArray<uint8>& byteArray) const

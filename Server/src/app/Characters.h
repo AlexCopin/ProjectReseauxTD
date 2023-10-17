@@ -50,6 +50,8 @@ struct Enemy
 {
 	std::uint32_t index;
 	std::vector<Vector3> pathPoints;
+	Vector3 nextPoint;
+	Vector3 actualPosition;
 };
 
 //See for inheritance

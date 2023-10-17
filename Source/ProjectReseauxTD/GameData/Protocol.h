@@ -17,6 +17,7 @@ enum class EOpcode : uint8
 	C_EnemySpawn,
 	C_TowerSpawn,
 	C_EnemyPath,
+	C_EnemyPos,
 	C_CastlePosition,
 	S_PlayerInit,
 	S_EnemySpawn,
@@ -201,7 +202,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> pathPoints;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint8 enemyIndex;
+
 	static constexpr EOpcode opcode = EOpcode::C_EnemyPath;
+	void Serialize(TArray<uint8>& byteArray) const;
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyPosClientPacket
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector actualPos;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int8 enemyIndex;
+
+	static constexpr EOpcode opcode = EOpcode::C_EnemyPos;
 	void Serialize(TArray<uint8>& byteArray) const;
 };
 

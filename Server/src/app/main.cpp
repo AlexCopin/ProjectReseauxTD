@@ -59,6 +59,7 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 void build_packet_gold(GameData& gameData);
 void build_packet_spawnableData(GameData& gameData, const Player& player);
 void send_packet(const Player& player, ENetPacket* packet);
+void check_enemies_position(GameData& gameData);
 
 int main()
 {
@@ -195,6 +196,18 @@ void send_packet(const Player& player, ENetPacket* packet)
 	enet_peer_send(player.peer, 0, packet);
 }
 
+void check_enemies_position(GameData& gameData)
+{
+	for (const auto& enemy : gameData.enemies)
+	{
+		if (Vector3::Distance(enemy.second.actualPosition, enemy.second.nextPoint) <= 0.3f)
+		{
+			//enemy.second.nextPoint++;
+			//Send nextPoint to client
+		}
+	}
+}
+
 void build_packet_gold(GameData& gameData)
 {
 	GoldServerPacket packet;
@@ -290,10 +303,22 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 				std::cout << "enemyPathPacket received : " << enemyPathPacket.pathPoints[i] << std::endl;
 			}
 
+			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
+
 			EnemyPositionServerPacket enemyPositionPacket;
 			enemyPositionPacket.nextPos = enemyPathPacket.pathPoints[0];
 
 			send_packet(gameData.players.begin()->second, build_packet(enemyPositionPacket, 0));
+			break;
+		}
+		case Opcode::C_EnemyPos:
+		{
+			EnemyPosClientPacket enemyPosPacket = EnemyPosClientPacket::Unserialize(message, offset);
+
+			gameData.enemies.find(enemyPosPacket.enemyIndex)->second.actualPosition = enemyPosPacket.actualPos;
+
+			check_enemies_position(gameData);
+			break;
 		}
 	}
 }

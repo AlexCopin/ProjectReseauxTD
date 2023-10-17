@@ -290,6 +290,17 @@ EnemyPathClientPacket EnemyPathClientPacket::Unserialize(const std::vector<std::
 	for (auto& pos : packet.pathPoints)
 		pos = Unserialize_v3(byteArray, offset);
 
+	packet.enemyIndex = Unserialize_u8(byteArray, offset);
+
+	return packet;
+}
+
+EnemyPosClientPacket EnemyPosClientPacket::Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset)
+{
+	EnemyPosClientPacket packet;
+	packet.actualPos = Unserialize_v3(byteArray, offset);
+	packet.enemyIndex = Unserialize_u8(byteArray, offset);
+
 	return packet;
 }
 

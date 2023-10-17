@@ -13,6 +13,7 @@ enum class Opcode : std::uint8_t
 	C_EnemySpawn,
 	C_TowerSpawn,
 	C_EnemyPath,
+	C_EnemyPos,
 	C_CastlePosition,
 	S_PlayerInit,
 	S_EnemySpawn,
@@ -116,9 +117,19 @@ struct TowerSpawnServerPacket
 struct EnemyPathClientPacket
 {
 	std::vector<Vector3> pathPoints;
+	std::uint8_t enemyIndex;
 
 	static constexpr Opcode opcode = Opcode::C_EnemyPath;
 	static EnemyPathClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
+};
+
+struct EnemyPosClientPacket
+{
+	Vector3 actualPos;
+	std::uint8_t enemyIndex;
+
+	static constexpr Opcode opcode = Opcode::C_EnemyPos;
+	static EnemyPosClientPacket Unserialize(const std::vector<std::uint8_t>& byteArray, std::size_t& offset);
 };
 
 struct EnemyPositionServerPacket
