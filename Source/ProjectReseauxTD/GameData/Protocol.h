@@ -219,7 +219,7 @@ public:
 	FVector actualPos;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int8 enemyIndex;
+	uint8 enemyIndex;
 
 	static constexpr EOpcode opcode = EOpcode::C_EnemyPos;
 	void Serialize(TArray<uint8>& byteArray) const;
