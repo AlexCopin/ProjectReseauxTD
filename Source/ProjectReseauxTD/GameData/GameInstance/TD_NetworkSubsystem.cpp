@@ -230,12 +230,14 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 		case EOpcode::S_Gold:
 		{
 			FGoldServerPacket packet = FGoldServerPacket::Unserialize(messageArray, offset);
-			OnGoldChangeEvent.Broadcast(packet.value);
+			OnGoldChangeEvent.Broadcast(packet.value); 
+			break;
 		}
 		case EOpcode::S_TowerData:
 		{
 			FTowerDataServerPacket packet = FTowerDataServerPacket::Unserialize(messageArray, offset);
 			GetWorld()->GetFirstPlayerController<ATD_PlayerController>()->ReceiveTowerData(packet.towerData);
+			break;
 		}
 	}
 }

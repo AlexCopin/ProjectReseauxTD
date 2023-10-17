@@ -297,3 +297,13 @@ void GoldServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 {
 	Serialize_u32(byteArray, value);
 }
+
+void TowerDataServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u8(byteArray, (std::uint8_t)towerData.typeTower);
+	Serialize_str(byteArray, towerData.name);
+	Serialize_u32(byteArray, towerData.radius);
+	Serialize_u32(byteArray, towerData.range);
+	Serialize_u32(byteArray, towerData.cost);
+	//Serialize_f32(byteArray, towerData.fireRate);
+}

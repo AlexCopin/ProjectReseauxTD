@@ -32,14 +32,14 @@ struct Player
 
 
 
-enum class EnemyType
+enum class EnemyType : std::uint8_t
 {
 	Fast,
 	Gold,
 	Tank
 };
 
-enum class TowerType
+enum class TowerType : std::uint8_t
 {
 	Normal,
 	Slow,
@@ -55,23 +55,37 @@ struct Enemy
 //See for inheritance
 struct Tower 
 {
-	const float radius = 100.0f;
+	TowerType typeTower;
+	std::string name;
+	std::uint32_t radius;
+	std::uint32_t range;
+	std::uint32_t cost;
+	float fireRate;
 };
-struct TowerSimple : Tower
+struct TowerSimple
 {
-	const float radius = 100.0f;
-	const float range = 300.0f;
+	const TowerType typeTower = TowerType::Normal;
+	const std::string name = "Simple Tower";
+	const std::uint32_t radius = 100;
+	const std::uint32_t range = 300.0f;
+	const std::uint32_t cost = 100;
 	const float fireRate = 0.7f;
 };
-struct TowerFrost : Tower
+struct TowerFrost
 {
-	const float radius = 150.0f;
-	const float range = 400.0f;
+	const TowerType typeTower = TowerType::Slow;
+	const std::string name = "Frost Tower";
+	const std::uint32_t radius = 150;
+	const std::uint32_t range = 400;
+	const std::uint32_t cost = 150;
 	const float fireRate = 1.2f;
 };
-struct TowerFast : Tower
+struct TowerFast
 {
-	const float radius = 100.0f;
-	const float range = 500.0f;
+	const TowerType typeTower = TowerType::Fast;
+	const std::string name = "Fast Tower";
+	const std::uint32_t radius = 100;
+	const std::uint32_t range = 50;
+	const std::uint32_t cost = 150;
 	const float fireRate = 0.4f;
 };

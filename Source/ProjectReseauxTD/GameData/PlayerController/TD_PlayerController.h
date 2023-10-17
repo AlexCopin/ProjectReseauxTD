@@ -41,6 +41,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PC | Pawns")
 	TSubclassOf<ATD_PawnTower> PawnTowerClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FSpawnableData> SpawnableDatas;
 	UFUNCTION()
 	void ReceiveTowerData(const FSpawnableData& spawnableData);
 

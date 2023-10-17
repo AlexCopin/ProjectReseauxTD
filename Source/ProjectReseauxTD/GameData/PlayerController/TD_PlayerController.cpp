@@ -64,13 +64,14 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 	{
 		PlayerWidget = CreateWidget<UTD_WPlayerWidget>(this, pawn->PawnWidgetClass);
 		PlayerWidget->AddToViewport();
+		for(const auto& data : SpawnableDatas)
+			PlayerWidget->AddSpawnableData(data);
 	}
 }
 
 void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData)
 {
-	if(PlayerWidget)
-		PlayerWidget->AddSpawnableData(spawnableData);
+	SpawnableDatas.Add(spawnableData);
 }
 
 void ATD_PlayerController::UpdateGold(int32 value)

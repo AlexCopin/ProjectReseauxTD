@@ -9,6 +9,8 @@ struct PROJECTRESEAUXTD_API FSpawnableData
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	uint8 EnumValue;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Range = 500;

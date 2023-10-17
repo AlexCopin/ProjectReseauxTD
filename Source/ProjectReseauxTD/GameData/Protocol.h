@@ -240,11 +240,11 @@ struct FTowerDataServerPacket
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSpawnableData towerData;
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerData;
 	static FTowerDataServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
-
 };
 
 

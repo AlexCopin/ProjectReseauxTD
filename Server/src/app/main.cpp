@@ -57,6 +57,7 @@ public:
 void tick(ServerData& serverData, GameData& gameData);
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
 void build_packet_gold(GameData& gameData);
+void build_packet_spawnableData(GameData& gameData);
 void send_packet(const Player& player, ENetPacket* packet);
 
 int main()
@@ -121,7 +122,7 @@ int main()
 							gameData.goldAttacker = AttackerStartingGold;
 							packet.value = AttackerStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
-
+							//build_packet_spawnableData(gameData);
 							std::cout << "Attacker connect" << std::endl;
 
 						}
@@ -132,6 +133,7 @@ int main()
 							gameData.goldDefender = DefenderStartingGold;
 							packet.value = DefenderStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
+							build_packet_spawnableData(gameData);
 
 							std::cout << "Defender connect" << std::endl;
 							gameData.gameStarted = true;
@@ -209,6 +211,54 @@ void build_packet_gold(GameData& gameData)
 			gameData.goldDefender += DefenderGoldPerSecond;
 			packet.value = gameData.goldDefender;
 			send_packet(player.second, build_packet(packet, 0));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void build_packet_spawnableData(GameData& gameData)
+{
+	TowerDataServerPacket packet01;
+	TowerSimple simpleTower;
+	packet01.towerData.typeTower = simpleTower.typeTower;
+	packet01.towerData.name = simpleTower.name;
+	packet01.towerData.radius = simpleTower.radius;
+	packet01.towerData.range = simpleTower.range;
+	packet01.towerData.cost = simpleTower.cost;
+	packet01.towerData.fireRate = simpleTower.fireRate;
+	std::cout << packet01.towerData.name << std::endl;
+	TowerDataServerPacket packet02;
+	TowerFrost towerFrost;
+	packet02.towerData.typeTower = towerFrost.typeTower;
+	packet02.towerData.name = towerFrost.name;
+	packet02.towerData.radius = towerFrost.radius;
+	packet02.towerData.range = towerFrost.range;
+	packet02.towerData.cost = towerFrost.cost;
+	packet02.towerData.fireRate = towerFrost.fireRate;
+	std::cout << packet02.towerData.name << std::endl;
+	TowerDataServerPacket packet03;
+	TowerFast towerFast;
+	packet03.towerData.typeTower = towerFast.typeTower;
+	packet03.towerData.name = towerFast.name;
+	packet03.towerData.radius = towerFast.radius;
+	packet03.towerData.range = towerFast.range;
+	packet03.towerData.cost = towerFast.cost;
+	packet03.towerData.fireRate = towerFast.fireRate;
+	std::cout << packet03.towerData.name << std::endl;
+
+	for (auto& player : gameData.players)
+	{
+		switch (player.second.type)
+		{
+		case PlayerType::Attacker:
+			//Do enemies
+			break;
+		case PlayerType::Defender:
+			send_packet(player.second, build_packet(packet01, 0));
+			send_packet(player.second, build_packet(packet02, 0));
+			send_packet(player.second, build_packet(packet03, 0));
 			break;
 		default:
 			break;

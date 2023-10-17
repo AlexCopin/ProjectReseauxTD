@@ -291,6 +291,7 @@ FGoldServerPacket FGoldServerPacket::Unserialize(const TArray<uint8>& byteArray,
 FTowerDataServerPacket FTowerDataServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
 {
 	FTowerDataServerPacket packet;
+	packet.towerData.EnumValue = Unserialize_u8(byteArray, offset);
 	packet.towerData.Name = Unserialize_str(byteArray, offset);
 	packet.towerData.Radius = Unserialize_u32(byteArray, offset);
 	packet.towerData.Range = Unserialize_u32(byteArray, offset);
