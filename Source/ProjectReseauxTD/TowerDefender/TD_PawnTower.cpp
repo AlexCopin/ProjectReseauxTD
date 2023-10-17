@@ -27,9 +27,14 @@ void ATD_PawnTower::Tick(float DeltaTime)
 	{
 		FVector position;
 		FVector direction;
-		GetLocalViewingPlayerController()->DeprojectMousePositionToWorld(position, direction);
-		DrawDebugCircle(GetWorld(), position, CurrentTowerData.Radius, 50, FColor::Red, false, 0.1f);
-		DrawDebugCircle(GetWorld(), position, CurrentTowerData.Radius + CurrentTowerData.Range, 50, FColor::Orange, false, 0.1f);
+		FHitResult hit;
+		GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(CursorPosition, direction);
+		CursorPositionOnFloor *= FVector::UpVector;
+		FString debugString = FString::Printf(TEXT("Vector mouse pos =  %f - %f - %f"), CursorPositionOnFloor.X, CursorPositionOnFloor.Y, CursorPositionOnFloor.Z);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 0.5f, FColor::Red, *debugString);
+		//GetWorld()->LineTraceSingleByChannel(hit, position, FVector::DownVector * 100, ECollisionChannel::ECC_EngineTraceChannel3);
+		DrawDebugCircle(GetWorld(), CursorPositionOnFloor, CurrentTowerData.Radius, 50, FColor::Red, false, 0.1f);
+		DrawDebugCircle(GetWorld(), CursorPositionOnFloor, CurrentTowerData.Radius + CurrentTowerData.Range, 50, FColor::Orange, false, 0.1f);
 	}
 }
 

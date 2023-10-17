@@ -28,5 +28,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector CursorPositionOnFloor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector CursorPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector CursorPositionDown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UTD_WPlayerWidget> PawnWidgetClass;
 };
