@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/TargetPoint.h"
 #include "TD_Enemy.h"
+#include "ProjectReseauxTD/GameData/Protocol.h"
 #include "TD_EnemySpawner.generated.h"
 
 UCLASS()
@@ -15,6 +16,9 @@ class PROJECTRESEAUXTD_API ATD_EnemySpawner : public AActor
 	
 public:	
 	ATD_EnemySpawner(const FObjectInitializer& OI);
+
+	UFUNCTION()
+	void SpawnEnemy(FEnemySpawnServerPacket enemySpawnServerPacket);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemySpawner")
 	TObjectPtr<USceneComponent> Root;

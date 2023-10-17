@@ -21,12 +21,18 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnemySpawned();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void MoveTo(FEnemyPositionServerPacket enemyPositionServerPacket);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
 	TObjectPtr<ATargetPoint> TargetPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
 	TObjectPtr<UNavigationPath> TPath;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FVector NextPoint;
 
 
 protected:

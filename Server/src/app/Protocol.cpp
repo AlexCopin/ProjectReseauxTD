@@ -318,3 +318,5 @@ void TowerDataServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) cons
 	Serialize_u32(byteArray, towerData.cost);
 	//Serialize_f32(byteArray, towerData.fireRate);
 }
+
+
