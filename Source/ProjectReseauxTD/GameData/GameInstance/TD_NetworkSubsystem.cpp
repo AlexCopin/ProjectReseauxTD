@@ -14,11 +14,11 @@ void UTD_NetworkSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		UE_LOG(ENet6, Error, TEXT("failed to initialize ENet"));
 		return;
 	}
-	if (!Connect("localhost"))
+	/*if (!Connect("localhost"))
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, TEXT("Not connected!"));
 		return;
-	}
+	}*/
 }
 
 void UTD_NetworkSubsystem::Deinitialize()
@@ -82,6 +82,7 @@ void UTD_NetworkSubsystem::Tick(float /*DeltaTime*/)
 
 				// On a perdu la connexion au serveur
 			case ENetEventType::ENET_EVENT_TYPE_DISCONNECT:
+        //Add event disconnected used in BP i don't know
 				UE_LOG(ENet6, Log, TEXT("Peer %u disconnected!"), enet_peer_get_id(Event.peer));
 				break;
 

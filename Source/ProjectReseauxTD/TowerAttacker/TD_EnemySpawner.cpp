@@ -16,10 +16,13 @@ ATD_EnemySpawner::ATD_EnemySpawner(const FObjectInitializer& OI) : Super(OI)
 void ATD_EnemySpawner::SpawnEnemy(FEnemySpawnServerPacket enemySpawnServerPacket)
 {
 	auto spawnedEnemy = GetWorld()->SpawnActor<ATD_Enemy>(EnemyActor, GetActorTransform());
-	spawnedEnemy->AttachToComponent(Root, FAttachmentTransformRules::KeepRelativeTransform);
-	spawnedEnemy->SetActorRelativeLocation(FVector(0));
-	spawnedEnemy->Initialize(TargetPoint);
-	spawnedEnemy->EnemySpawned();
+  if(spawnedEnemy)
+  {
+	  spawnedEnemy->AttachToComponent(Root, FAttachmentTransformRules::KeepRelativeTransform);
+	  spawnedEnemy->SetActorRelativeLocation(FVector(0));
+	  spawnedEnemy->Initialize(TargetPoint);
+	  spawnedEnemy->EnemySpawned();
+  }
 }
 
 // Called when the game starts or when spawned
