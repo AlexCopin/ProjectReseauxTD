@@ -246,9 +246,19 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.0f, FColor::Red, *debugString);
 			auto PC = GetWorld()->GetFirstPlayerController<ATD_PlayerController>();
 			if (PC->PlayerWidget)
-				PC->ReceiveTowerData(packet.towerData, true);
+				PC->ReceiveData(packet.towerData, true);
 			else
-				PC->ReceiveTowerData(packet.towerData, false);
+				PC->ReceiveData(packet.towerData, false);
+			break;
+		}
+		case EOpcode::S_EnemyData:
+		{
+			FEnemyDataServerPacket packet = FEnemyDataServerPacket::Unserialize(messageArray, offset);
+			auto PC = GetWorld()->GetFirstPlayerController<ATD_PlayerController>();
+			if (PC->PlayerWidget)
+				PC->ReceiveData(packet.enemyData, true);
+			else
+				PC->ReceiveData(packet.enemyData, false);
 			break;
 		}
 	}

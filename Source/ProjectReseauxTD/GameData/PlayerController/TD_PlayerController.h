@@ -46,7 +46,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FSpawnableData> SpawnableDatas;
 	UFUNCTION()
-	void ReceiveTowerData(const FSpawnableData& spawnableData, bool inWidget);
+	void ReceiveData(const FSpawnableData& spawnableData, bool inWidget);
 
 	//Gold
 	UPROPERTY()
@@ -67,7 +67,7 @@ public:
 	TSubclassOf<ATD_Tower> TowerBaseClass;
 
 	UPROPERTY()
-	TMap<uint8, FSpawnableData> TowersData;
+	TMap<uint8, FSpawnableData> Data;
 	UPROPERTY()
 	TMap<int32, TObjectPtr<ATD_Tower>> Towers;
 

@@ -58,7 +58,8 @@ public:
 void tick(ServerData& serverData, GameData& gameData);
 void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData);
 void build_packet_gold(GameData& gameData);
-void build_packet_spawnableData(GameData& gameData, const Player& player);
+void build_packet_spawnableEnemyData(GameData& gameData, const Player& player);
+void build_packet_spawnableTowerData(GameData& gameData, const Player& player);
 void send_packet(const Player& player, ENetPacket* packet);
 void check_enemy_position(GameData& gameData, uint32_t enemyIndex);
 
@@ -124,7 +125,7 @@ int main()
 							gameData.goldAttacker = AttackerStartingGold;
 							packet.value = AttackerStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
-							//build_packet_spawnableData(gameData);
+							build_packet_spawnableEnemyData(gameData, newPlayer);
 							std::cout << "Attacker connect" << std::endl;
 
 						}
@@ -135,7 +136,7 @@ int main()
 							gameData.goldDefender = DefenderStartingGold;
 							packet.value = DefenderStartingGold;
 							send_packet(newPlayer, build_packet(packet, 0));
-							build_packet_spawnableData(gameData, newPlayer);
+							build_packet_spawnableTowerData(gameData, newPlayer);
 
 							std::cout << "Defender connect" << std::endl;
 							gameData.gameStarted = true;
@@ -239,7 +240,20 @@ void build_packet_gold(GameData& gameData)
 	}
 }
 
-void build_packet_spawnableData(GameData& gameData, const Player& player)
+void build_packet_spawnableEnemyData(GameData& gameData, const Player& player)
+{
+	EnemyDataServerPacket packet01;
+	packet01.enemyData = EnemyFastToEnemy();
+	send_packet(player, build_packet(packet01, 0));
+	EnemyDataServerPacket packet02;
+	packet02.enemyData = EnemyGoldToEnemy();
+	send_packet(player, build_packet(packet02, 0)); 
+	EnemyDataServerPacket packet03;
+	packet03.enemyData = EnemyTankToEnemy();
+	send_packet(player, build_packet(packet03, 0));
+}
+
+void build_packet_spawnableTowerData(GameData& gameData, const Player& player)
 {
 	TowerDataServerPacket packet01;
 	packet01.towerData = TowerSimpleToTower();
@@ -266,16 +280,48 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 
 			std::cout << "enemyPacket received" << std::endl;
 			EnemySpawnServerPacket enemySpawnServerPacket;
-			enemySpawnServerPacket.enemyType = 2;
-			enemySpawnServerPacket.line = 0;
+			enemySpawnServerPacket.enemyType = (std::uint8_t)enemyPacket.enemyType;
+			enemySpawnServerPacket.line = enemyPacket.line;
 			enemySpawnServerPacket.index = gameData.currentEnemyIndex;
 
 			Enemy newEnemy;
 			newEnemy.index = gameData.currentEnemyIndex;
 			newEnemy.actualPointIndex = 0;
-			gameData.enemies.emplace(gameData.currentEnemyIndex++, newEnemy);
+			gameData.enemies.emplace(gameData.currentEnemyIndex, newEnemy);
 
-			send_packet(gameData.players.begin()->second, build_packet(enemySpawnServerPacket, 0));
+			//Add Pos in Tower later
+			Enemy enemyData;
+			switch (enemyData.typeEnemy)
+			{
+			case EnemyType::Fast:
+				enemyData = EnemyFastToEnemy();
+				break;
+			case EnemyType::Gold:
+				enemyData = EnemyGoldToEnemy();
+				break;
+			case EnemyType::Tank:
+				enemyData = EnemyTankToEnemy();
+				break;
+			}
+
+			if (gameData.goldAttacker < enemyData.cost)
+				return;
+
+			GoldServerPacket goldPacket;
+			gameData.goldAttacker -= enemyData.cost;
+			goldPacket.value = gameData.goldAttacker;
+
+			for (const auto& player : gameData.players)
+			{
+				std::cout << "Send ServerEnemyPacket" << std::endl;
+				if (player.second.type == PlayerType::Attacker)
+				{
+					send_packet(player.second, build_packet(goldPacket, 0));
+				}
+
+				send_packet(player.second, build_packet(enemySpawnServerPacket, 0));
+			}
+			gameData.currentEnemyIndex++;
 
 			break;
 		}
@@ -292,34 +338,36 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			serverTowerPacket.position = towerPacket.position;
       
 			//Add Pos in Tower later
-      Tower towerData;
+			Tower towerData;
 			switch(towerPacket.towerType)
 			{
 			case TowerType::Normal:
-        towerData = TowerSimpleToTower();
+				towerData = TowerSimpleToTower();
 				break;
 			case TowerType::Fast:
-        towerData = TowerFastToTower();
+				towerData = TowerFastToTower();
 				break;
 			case TowerType::Slow:
-        towerData = TowerSlowToTower();
+				towerData = TowerSlowToTower();
 				break;
 			}
-      if (gameData.goldDefender < towerData.cost)
-        return;
-      gameData.towers.emplace(gameData.currentTowerIndex, towerData);
 
-      GoldServerPacket goldPacket;
-      gameData.goldDefender -= towerData.cost;
-      goldPacket.value = gameData.goldDefender;
+			if (gameData.goldDefender < towerData.cost)
+				return;
+
+		    gameData.towers.emplace(gameData.currentTowerIndex, towerData);
+
+		    GoldServerPacket goldPacket;
+		    gameData.goldDefender -= towerData.cost;
+		    goldPacket.value = gameData.goldDefender;
 
 			for(const auto& player : gameData.players)
 			{
-        std::cout << "Send ServerTowerPacket" << std::endl;
-        if(player.second.type == PlayerType::Defender)
-        {
-				  send_packet(player.second, build_packet(goldPacket, 0));
-        }
+				std::cout << "Send ServerTowerPacket" << std::endl;
+				if(player.second.type == PlayerType::Defender)
+				{
+					send_packet(player.second, build_packet(goldPacket, 0));
+				}
 
 				send_packet(player.second, build_packet(serverTowerPacket, 0));
 			}

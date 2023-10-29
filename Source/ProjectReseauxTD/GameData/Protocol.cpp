@@ -300,3 +300,14 @@ FTowerDataServerPacket FTowerDataServerPacket::Unserialize(const TArray<uint8>& 
 	packet.towerData.Cost = Unserialize_u32(byteArray, offset);
 	return packet;
 }
+
+FEnemyDataServerPacket FEnemyDataServerPacket::Unserialize(const TArray<uint8>& byteArray, int32& offset)
+{
+	FEnemyDataServerPacket packet;
+	packet.enemyData.EnumValue = Unserialize_u8(byteArray, offset);
+	packet.enemyData.Name = Unserialize_str(byteArray, offset);
+	packet.enemyData.Radius = Unserialize_u32(byteArray, offset);
+	packet.enemyData.Range = Unserialize_u32(byteArray, offset);
+	packet.enemyData.Cost = Unserialize_u32(byteArray, offset);
+	return packet;
+}
