@@ -18,9 +18,10 @@ void ATD_EnemySpawner::SpawnEnemy(FEnemySpawnServerPacket enemySpawnServerPacket
 	auto spawnedEnemy = GetWorld()->SpawnActor<ATD_Enemy>(EnemyActor, GetActorTransform());
   if(spawnedEnemy)
   {
-	  spawnedEnemy->AttachToComponent(Root, FAttachmentTransformRules::KeepRelativeTransform);
-	  spawnedEnemy->SetActorRelativeLocation(FVector(0));
-	  spawnedEnemy->Initialize(TargetPoint);
+	  //spawnedEnemy->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	  //spawnedEnemy->MoveToLocation(FVector(0));
+    spawnedEnemy->SetActorLocation(GetActorLocation());
+	  spawnedEnemy->Initialize(TargetPoint, enemySpawnServerPacket);
 	  spawnedEnemy->EnemySpawned();
   }
 }

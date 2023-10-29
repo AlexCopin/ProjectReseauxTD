@@ -339,7 +339,11 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 
 			if (gameData.enemies.size() <= 0)
 				break;
-
+      if (enemyPathPacket.pathPoints.size() <= 0)
+      {
+        std::cout << "No path points received";
+        break;
+      }
 			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.pathPoints = enemyPathPacket.pathPoints;
 			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.nextPoint = enemyPathPacket.pathPoints[0];
 			gameData.enemies.find(enemyPathPacket.enemyIndex)->second.index = enemyPathPacket.enemyIndex;
