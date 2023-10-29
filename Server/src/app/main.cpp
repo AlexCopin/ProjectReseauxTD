@@ -289,9 +289,8 @@ void handle_message(const std::vector<std::uint8_t>& message, GameData& gameData
 			newEnemy.actualPointIndex = 0;
 			gameData.enemies.emplace(gameData.currentEnemyIndex, newEnemy);
 
-			//Add Pos in Tower later
 			Enemy enemyData;
-			switch (enemyData.typeEnemy)
+			switch (enemyPacket.enemyType)
 			{
 			case EnemyType::Fast:
 				enemyData = EnemyFastToEnemy();

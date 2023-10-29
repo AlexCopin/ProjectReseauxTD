@@ -8,6 +8,8 @@
 #include "ProjectReseauxTD/GameData/SpawnableStruct.h"
 #include "TD_Tower.generated.h"
 
+class UStaticMesh;
+
 UCLASS()
 class PROJECTRESEAUXTD_API ATD_Tower : public AActor
 {
@@ -28,12 +30,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite)
+  TArray<TObjectPtr<UStaticMesh>> Meshes;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Shoot(AActor& Enemie);
 
+  UFUNCTION(BlueprintNativeEvent)
 	void Init(const FSpawnableData& _TowerData);
+  void Init_Implementation(const FSpawnableData& _TowerData);
+
+  UFUNCTION(BlueprintImplementableEvent)
+  void ChangeMesh(int32 indexMesh);
 
 };

@@ -106,6 +106,7 @@ void ATD_PlayerController::SpawnTower(FTowerSpawnServerPacket ReceivedPacket)
 {
 	auto NewTower = GetWorld()->SpawnActor<ATD_Tower>(TowerBaseClass, ReceivedPacket.position, FRotator::ZeroRotator);
 	Towers.Emplace(ReceivedPacket.index, NewTower);
+  NewTower->ChangeMesh(ReceivedPacket.towerType);
   if (PlayerType == EPlayerType::Defender)
   {
 	  FSpawnableData data = *Data.Find(ReceivedPacket.towerType);

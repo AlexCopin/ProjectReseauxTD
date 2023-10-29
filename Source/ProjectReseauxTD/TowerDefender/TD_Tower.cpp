@@ -40,8 +40,8 @@ void ATD_Tower::Shoot(AActor& Enemie)
 	
 }
 
-void ATD_Tower::Init(const FSpawnableData& _TowerData)
+void ATD_Tower::Init_Implementation(const FSpawnableData& _TowerData)
 {
-	TowerData = _TowerData;
+  TowerData = _TowerData;
 }
 

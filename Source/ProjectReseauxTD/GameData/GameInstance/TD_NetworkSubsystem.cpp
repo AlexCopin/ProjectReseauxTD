@@ -218,6 +218,8 @@ void UTD_NetworkSubsystem::handle_message(const std::vector<std::uint8_t>& messa
 		case EOpcode::S_EnemySpawn:
 		{
 			FEnemySpawnServerPacket packet = FEnemySpawnServerPacket::Unserialize(messageArray, offset);
+      FString debugString = FString::Printf(TEXT("Receive spawn Enemy Id = %f"), (float)packet.index);
+      GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.0f, FColor::Red, *debugString);
 			OnEnemySpawnEvent.Broadcast(packet);
 			break;
 		}

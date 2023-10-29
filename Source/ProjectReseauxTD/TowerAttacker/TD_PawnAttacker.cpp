@@ -24,6 +24,9 @@ void ATD_PawnAttacker::SelectEnemy(const FSpawnableData& data)
 		enemySpawnClientPacket.line = 0;
 		enemySpawnClientPacket.enemyType = (EEnemyType)data.EnumValue;
 
+    FString debugString = FString::Printf(TEXT("Try/Send spawn Enemy"));
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.0f, FColor::Red, *debugString);
+
 		NetworkSS->SendEnemySpawnClientPacket(enemySpawnClientPacket);
 	}
 }

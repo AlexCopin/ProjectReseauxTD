@@ -80,13 +80,13 @@ struct TowerFrost
 };
 struct TowerFast
 {
-	const TowerType typeTower = TowerType::Fast;
-	const std::string name = "Fast Tower";
-	const std::uint32_t radius = 200;
-	const std::uint32_t range = 600;
-	const std::uint32_t damage = 30;
-	const std::uint32_t cost = 150;
-	const float fireRate = 0.4f;
+  const TowerType typeTower = TowerType::Fast;
+  const std::string name = "Fast Tower";
+  const std::uint32_t radius = 200;
+  const std::uint32_t range = 600;
+  const std::uint32_t damage = 30;
+  const std::uint32_t cost = 150;
+  const float fireRate = 0.4f;
 };
 
 struct Enemy
