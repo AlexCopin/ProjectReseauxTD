@@ -11,4 +11,5 @@ void UTD_WTowerCard::Init(const FSpawnableData& data)
 void UTD_WTowerCard::SelectThisCard()
 {
 	OnTowerCardSelectedEvent.Broadcast(SpawnableData);
+	OnEnemyCardSelectedEvent.Broadcast(SpawnableData);
 }

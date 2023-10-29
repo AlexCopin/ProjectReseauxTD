@@ -52,7 +52,7 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 			{
 				for (const auto& data : SpawnableDatas)
 				{
-					ReceiveTowerData(data, true);
+					ReceiveData(data, true);
 				}
 			}
 			break;
@@ -71,7 +71,7 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 			{
 				for (const auto& data : SpawnableDatas)
 				{
-					ReceiveTowerData(data, true);
+					ReceiveData(data, true);
 				}
 			}
 			break;
@@ -85,14 +85,14 @@ void ATD_PlayerController::SpawnRightPawn(EPlayerType playerType)
 	}
 }
 
-void ATD_PlayerController::ReceiveTowerData(const FSpawnableData& spawnableData, bool inWidget)
+void ATD_PlayerController::ReceiveData(const FSpawnableData& spawnableData, bool inWidget)
 {
 	if(PlayerWidget && inWidget)
 		PlayerWidget->AddSpawnableData(spawnableData, GetPawn<ATD_Pawn>());
 	else
 		SpawnableDatas.Add(spawnableData);
-  if(PlayerType == EPlayerType::Defender)
-	  TowersData.Emplace(spawnableData.EnumValue, spawnableData);
+
+	Data.Emplace(spawnableData.EnumValue, spawnableData);
 }
 
 void ATD_PlayerController::UpdateGold(int32 value)
@@ -108,7 +108,7 @@ void ATD_PlayerController::SpawnTower(FTowerSpawnServerPacket ReceivedPacket)
 	Towers.Emplace(ReceivedPacket.index, NewTower);
   if (PlayerType == EPlayerType::Defender)
   {
-	  FSpawnableData data = *TowersData.Find(ReceivedPacket.towerType);
+	  FSpawnableData data = *Data.Find(ReceivedPacket.towerType);
 	  NewTower->Init(data);
   }
 }

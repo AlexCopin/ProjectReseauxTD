@@ -20,6 +20,7 @@ enum class Opcode : std::uint8_t
 	S_EnemyPos,
 	S_TowerSpawn,
 	S_Gold,
+	S_EnemyData,
 	S_TowerData
 };
 
@@ -140,6 +141,14 @@ struct GoldServerPacket
 	std::uint32_t value;
 
 	static constexpr Opcode opcode = Opcode::S_Gold;
+	void Serialize(std::vector<std::uint8_t>& byteArray) const;
+};
+
+struct EnemyDataServerPacket
+{
+	Enemy enemyData;
+
+	static constexpr Opcode opcode = Opcode::S_EnemyData;
 	void Serialize(std::vector<std::uint8_t>& byteArray) const;
 };
 

@@ -18,9 +18,8 @@ void UTD_WPlayerWidget::AddSpawnableData(const FSpawnableData& spawnableData, AT
 	auto card = CreateWidget<UTD_WTowerCard>(this, TowerCardClass);
 	CardsBox->AddChild(card);
 	card->Init(spawnableData);
-	if(auto castedPawn = Cast<ATD_PawnAttacker>(pawn))
-	{}
+	if(auto castedPawnAttacker = reinterpret_cast<ATD_PawnAttacker*>(pawn))
+		card->OnEnemyCardSelectedEvent.AddDynamic(castedPawnAttacker, &ATD_PawnAttacker::SelectEnemy);
 	else if (ATD_PawnTower* castedPawnDefender = reinterpret_cast<ATD_PawnTower*>(pawn))
 		card->OnTowerCardSelectedEvent.AddDynamic(castedPawnDefender, &ATD_PawnTower::SelectTower);
-	
 }

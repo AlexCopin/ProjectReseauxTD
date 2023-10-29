@@ -303,6 +303,18 @@ void GoldServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 	Serialize_u32(byteArray, value);
 }
 
+void EnemyDataServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
+{
+	Serialize_u8(byteArray, (std::uint8_t)enemyData.typeEnemy);
+	Serialize_str(byteArray, enemyData.name);
+	Serialize_u32(byteArray, enemyData.range);
+	Serialize_u32(byteArray, enemyData.health);
+	Serialize_u32(byteArray, enemyData.damage);
+	Serialize_u32(byteArray, enemyData.cost);
+	Serialize_u32(byteArray, enemyData.gain);
+	Serialize_f32(byteArray, enemyData.fireRate);
+}
+
 void TowerDataServerPacket::Serialize(std::vector<std::uint8_t>& byteArray) const
 {
 	Serialize_u8(byteArray, (std::uint8_t)towerData.typeTower);

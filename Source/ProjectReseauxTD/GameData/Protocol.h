@@ -24,6 +24,7 @@ enum class EOpcode : uint8
 	S_EnemyPos,
 	S_TowerSpawn,
 	S_Gold,
+	S_EnemyData,
 	S_TowerData
 };
 
@@ -253,6 +254,18 @@ public:
 
 	static constexpr EOpcode opcode = EOpcode::S_TowerData;
 	static FTowerDataServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
+};
+
+USTRUCT(BlueprintType)
+struct FEnemyDataServerPacket
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSpawnableData enemyData;
+
+	static constexpr EOpcode opcode = EOpcode::S_EnemyData;
+	static FEnemyDataServerPacket Unserialize(const TArray<uint8>& byteArray, int32& offset);
 };
 
 
