@@ -27,6 +27,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSpawnableData CurrentTowerData;
+  UPROPERTY(EditAnywhere, BlueprintReadWrite)
+  FSpawnableData GrosCaca;
 
 	UFUNCTION(BlueprintCallable)
 	void SelectTower(const FSpawnableData& data);
